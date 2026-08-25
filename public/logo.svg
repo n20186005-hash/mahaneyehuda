@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 140" role="img" aria-labelledby="title desc">
+  <title id="title">מדריך שוק מחנה יהודה</title>
+  <desc id="desc">סמל קשת אבן ירושלמית ורימון</desc>
+  <rect width="540" height="140" rx="28" fill="#1d1813"/>
+  <g transform="translate(24 18)">
+    <path d="M14 93V53C14 24 34 4 63 4s49 20 49 49v40H92V55c0-18-11-31-29-31S34 37 34 55v38z" fill="#ead9bd"/>
+    <path d="M52 56h22l8 12-8 25H52l-8-25z" fill="#aa3d36"/>
+    <path d="M57 48l6-10 6 10 10-2-5 11H52l-5-11z" fill="#d8a33a"/>
+    <circle cx="63" cy="73" r="5" fill="#ead9bd"/>
+  </g>
+  <text x="156" y="62" fill="#f4eadb" font-size="34" font-family="Arial, Helvetica, sans-serif" font-weight="700" direction="rtl" unicode-bidi="bidi-override">שוק מחנה יהודה</text>
+  <text x="156" y="100" fill="#d8a33a" font-size="22" font-family="Arial, Helvetica, sans-serif" direction="rtl" unicode-bidi="bidi-override">מדריך מבקרים עצמאי</text>
+</svg>

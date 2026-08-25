@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="הגדרות Cookie" description="ניהול העדפות Cookie ו-Google Analytics במדריך שוק מחנה יהודה.">
+  <section class="cookie-page section"><div class="container cookie-wrap">
+    <p class="eyebrow">שליטה בידיים שלכם</p><h1>הגדרות Cookie</h1><p class="updated">עודכן לאחרונה: אוגוסט 2026</p>
+    <p class="lede">אנו משתמשים במינימום הדרוש להפעלת האתר. אפשר לשנות את הבחירה בכל עת. פרסום מותאם אישית אינו פעיל באתר.</p>
+    <form class="prefs card" id="cookie-form">
+      <div class="pref-row"><div><h2>Cookie הכרחיים</h2><p>נדרשים לתפקוד בסיסי, אבטחה ושמירת בחירת ההסכמה. לא ניתן לכבות קטגוריה זו.</p></div><label class="status fixed"><input type="checkbox" checked disabled /><span>פעיל תמיד</span></label></div>
+      <div class="pref-row"><div><h2>Cookie לניתוח</h2><p><strong>Google Analytics</strong> מסייע להבין באופן מצרפי כיצד מבקרים משתמשים באתר. הוא נטען רק אם תפעילו אפשרות זו.</p></div><label class="status"><input type="checkbox" name="analytics" /><span>הפעלה</span></label></div>
+      <div class="pref-row"><div><h2>העדפות</h2><p>מאפשרות לשמור הגדרות ממשק מקומיות בעתיד. כרגע נשמרת בעיקר בחירת ההסכמה עצמה באחסון המקומי.</p></div><label class="status"><input type="checkbox" name="preferences" checked /><span>הפעלה</span></label></div>
+      <div class="pref-row"><div><h2>שיווק ופרסום</h2><p>האתר אינו מציג מודעות מותאמות אישית ואינו מפעיל Cookie שיווקיים.</p></div><label class="status fixed"><input type="checkbox" name="marketing" disabled /><span>לא פעיל</span></label></div>
+      <div class="consent"><h2>ניהול הסכמה</h2><p>השבתת ניתוח אינה פוגעת בגישה לתוכן. אפשר לחזור לעמוד זה בכל עת ולשנות את הבחירה.</p><div class="buttons"><button type="submit">שמירת העדפות</button><button type="button" id="reject-all" class="ghost">דחיית כל האפשרי</button></div><p id="saved" class="saved" role="status" aria-live="polite"></p></div>
+    </form>
+  </div></section>
+  <script is:inline>
+    (() => {
+      const KEY = 'mahaneYehudaCookiePreferences';
+      const form = document.getElementById('cookie-form');
+      const saved = document.getElementById('saved');
+      const analytics = form.elements.analytics;
+      const preferences = form.elements.preferences;
+      try {
+        const current = JSON.parse(localStorage.getItem(KEY) || '{}');
+        analytics.checked = current.analytics === true;
+        preferences.checked = current.preferences !== false;
+      } catch {}
+      function persist(next) {
+        localStorage.setItem(KEY, JSON.stringify(next));
+        window.dispatchEvent(new CustomEvent('cookie-preferences-updated', { detail: next }));
+        saved.textContent = 'ההעדפות נשמרו במכשיר זה.';
+      }
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        persist({ necessary: true, analytics: analytics.checked, preferences: preferences.checked, marketing: false });
+      });
+      document.getElementById('reject-all').addEventListener('click', () => {
+        analytics.checked = false;
+        preferences.checked = false;
+        persist({ necessary: true, analytics: false, preferences: false, marketing: false });
+      });
+    })();
+  </script>
+</BaseLayout>
+<style>
+  .cookie-page{background:#f3eadb;min-height:70vh}.cookie-wrap{max-width:960px}.cookie-wrap h1{font-size:clamp(3rem,8vw,6rem);line-height:.9;margin:.4rem 0}.updated{color:#7b6d60}.prefs{margin-top:2rem;padding:0 1.5rem;overflow:hidden}.pref-row{display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:center;padding:1.5rem .4rem;border-bottom:1px solid rgba(29,24,19,.13)}.pref-row h2,.consent h2{margin:0 0 .3rem;font-size:1.25rem}.pref-row p,.consent p{margin:0;color:#5d544b}.status{display:grid;gap:.25rem;justify-items:center;font-size:.78rem;font-weight:700;color:#4e6241}.status input{appearance:none;width:50px;height:28px;border-radius:999px;background:#b5aaa0;position:relative;cursor:pointer}.status input::after{content:"";position:absolute;width:22px;height:22px;top:3px;right:3px;border-radius:50%;background:white;transition:.2s}.status input:checked{background:#4e6241}.status input:checked::after{transform:translateX(-22px)}.status.fixed input{cursor:not-allowed;opacity:.65}.consent{padding:1.6rem .4rem 1.8rem}.buttons{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1rem}.buttons button{border:0;border-radius:999px;padding:.8rem 1.1rem;background:#1d1813;color:white;font-weight:800;cursor:pointer}.buttons .ghost{background:transparent;color:#1d1813;border:1px solid rgba(29,24,19,.25)}.saved{min-height:1.5rem;margin-top:.8rem!important;color:#4e6241!important;font-weight:700}@media(max-width:620px){.pref-row{grid-template-columns:1fr}.status{justify-self:start}}
+</style>

@@ -1,0 +1,19 @@
+---
+const { compact = false } = Astro.props;
+---
+<a href="/" class="logo" aria-label="מדריך שוק מחנה יהודה — דף הבית">
+  <svg viewBox="0 0 64 64" aria-hidden="true">
+    <rect width="64" height="64" rx="14" fill="#1d1813"/>
+    <path d="M10 51V29C10 13 19 5 32 5s22 8 22 24v22H43V30c0-9-4-14-11-14s-11 5-11 14v21z" fill="#ead9bd"/>
+    <path d="M25 30h14l5 8-5 14H25l-5-14z" fill="#aa3d36"/>
+    <path d="M28 26l4-7 4 7 7-2-4 8H25l-4-8z" fill="#d8a33a"/>
+  </svg>
+  {!compact && <span><strong>שוק מחנה יהודה</strong><small>מדריך מבקרים עצמאי</small></span>}
+</a>
+<style>
+  .logo { display: inline-flex; align-items: center; gap: .72rem; text-decoration: none; }
+  svg { width: 2.7rem; height: 2.7rem; flex: none; }
+  span { display: grid; line-height: 1.1; }
+  strong { font-size: .98rem; }
+  small { color: #71675d; font-size: .72rem; margin-top: .2rem; }
+</style>

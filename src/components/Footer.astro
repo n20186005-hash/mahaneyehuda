@@ -1,0 +1,34 @@
+---
+import Logo from './Logo.astro';
+---
+<footer class="footer">
+  <div class="container footer-grid">
+    <div class="brand"><Logo /><p>פרויקט מידע מקצועי, עצמאי וללא מטרות רווח למבקרים בירושלים.</p></div>
+    <div>
+      <h2>מידע משפטי</h2>
+      <a href="/privacy/">מדיניות פרטיות</a>
+      <a href="/terms/">תנאי שימוש</a>
+      <a href="/cookies/">הגדרות Cookie</a>
+    </div>
+    <div>
+      <h2>שקיפות ומקורות</h2>
+      <p>האתר הוא מדריך מידע עצמאי וללא מטרות רווח, ואינו קשור לעיריית ירושלים, למשרד ממשלתי או לארגון רשמי כלשהו.</p>
+      <p>מידע על האתר והביקור נבדק מול מקורות פומביים של עיריית ירושלים, הרשות לפיתוח ירושלים ומשרד התיירות. אין כאן דירוגים או המלצות מסחריות.</p>
+    </div>
+  </div>
+  <div class="container legal">
+    <p>זכויות צילום: כל הזכויות והזכויות המוסריות בתצלומים שייכות לצלמים המקוריים, בהתאם לרישיונות המקור.</p>
+    <p>© 2026 מדריך שוק מחנה יהודה. כל הזכויות שמורות.</p>
+  </div>
+</footer>
+<style>
+  .footer { background:#1d1813; color:#eee4d5; padding: 3.8rem 0 2rem; }
+  .footer-grid { display:grid; grid-template-columns:1fr .6fr 1.4fr; gap:2.5rem; }
+  h2 { font-size:1rem; color:#d9a03b; margin:0 0 1rem; }
+  p { color:#cfc3b4; max-width:60ch; font-size:.9rem; }
+  a { display:block; text-decoration:none; color:#eee4d5; margin:.5rem 0; }
+  a:hover { color:#d9a03b; }
+  .legal { border-top:1px solid rgba(255,255,255,.15); margin-top:2.3rem; padding-top:1.3rem; display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+  .legal p { margin:0; font-size:.82rem; }
+  @media(max-width:820px){.footer-grid{grid-template-columns:1fr}.legal{display:grid}}
+</style>

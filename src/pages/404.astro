@@ -1,0 +1,7 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="העמוד לא נמצא" description="העמוד המבוקש אינו קיים." noindex={true}>
+  <section class="section"><div class="container missing"><p class="eyebrow">404</p><h1>הסמטה הזאת לא מובילה לשום דף.</h1><p>אפשר לחזור למדריך הראשי של שוק מחנה יהודה.</p><a href="/">חזרה לדף הבית</a></div></section>
+</BaseLayout>
+<style>.missing{min-height:55vh;display:flex;flex-direction:column;justify-content:center}.missing h1{font-size:clamp(3rem,8vw,6rem);line-height:.9;max-width:12ch}.missing a{width:max-content;margin-top:1rem;background:#1d1813;color:#fff;padding:.8rem 1rem;border-radius:999px;text-decoration:none;font-weight:800}</style>

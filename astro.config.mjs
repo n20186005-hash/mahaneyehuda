@@ -2,9 +2,9 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
-// לאחר בחירת דומיין, יש להגדיר אותו כאן בלבד ולבנות מחדש.
-// כל כתובות ה-canonical, Open Graph, JSON-LD וה-sitemap נגזרות מ-Astro.site.
-const site = undefined;
+// הדומיין הרשמי מוגדר כאן בלבד; יש לבנות מחדש לאחר שינוי.
+// כל כתובות ה-canonical, Open Graph, JSON-LD, ה-sitemap וה-PWA נגזרות מ-Astro.site.
+const site = 'https://mahaneyehuda.org';
 
 export default defineConfig({
   site,

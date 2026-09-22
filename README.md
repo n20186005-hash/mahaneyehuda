@@ -14,9 +14,9 @@
 
 ## 域名只配置一次
 
-打开 `astro.config.mjs`，把 `const site = undefined;` 改成实际正式域名。不要在其他文件硬编码本站域名。
+正式域名已设置为 `https://mahaneyehuda.org`（`astro.config.mjs` 的 `const site`）。不要在其他文件硬编码本站域名；canonical / OG / JSON-LD / sitemap 均从 `Astro.site` 派生，实体事实集中在 `src/data/market.ts`。
 
-未设置 `site` 时：
+历史说明（未设置 `site` 时）：
 - 构建正常；
 - canonical / og:url 省略；
 - Open Graph 图片使用本地 `/og-card.png` 相对路径；
@@ -50,6 +50,14 @@ pnpm build
 ```bash
 pnpm deploy
 ```
+
+## PWA
+
+`public/site.webmanifest` + `public/sw.js` 提供可安装能力：
+
+- 图标 `public/icon-192.png`、`icon-512.png`、`icon-512-maskable.png`（由 `public/logo.svg` 的图形绘制）；
+- `start_url` 与 `scope` 均为 `/`，`display: standalone`；
+- Service Worker：页面 network-first（保证内容更新优先），静态资源 cache-first；注册脚本在 `src/layouts/BaseLayout.astro`。
 
 ## Google Analytics 与 Cookie 同意
 

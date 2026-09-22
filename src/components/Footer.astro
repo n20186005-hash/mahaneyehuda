@@ -1,9 +1,18 @@
 ---
 import Logo from './Logo.astro';
+import { ATTRACTION } from '../data/market';
+const mapAddress = `${ATTRACTION.streetAddressHe}, ${ATTRACTION.cityHe}`;
 ---
 <footer class="footer">
   <div class="container footer-grid">
     <div class="brand"><Logo /><p>פרויקט מידע מקצועי, עצמאי וללא מטרות רווח למבקרים בירושלים.</p></div>
+    <div>
+      <h2>פרטי המקום</h2>
+      <p class="nap-name">{ATTRACTION.nameHe} ({ATTRACTION.nameEn})</p>
+      <p class="nap-addr">{mapAddress}</p>
+      <p class="nap-geo">קואורדינטות: {ATTRACTION.latitude}, {ATTRACTION.longitude}</p>
+      <a href={ATTRACTION.mapsShareUrl} target="_blank" rel="noopener noreferrer">מיקום ב־Google Maps</a>
+    </div>
     <div>
       <h2>מידע משפטי</h2>
       <a href="/privacy/">מדיניות פרטיות</a>
@@ -23,8 +32,10 @@ import Logo from './Logo.astro';
 </footer>
 <style>
   .footer { background:#1d1813; color:#eee4d5; padding: 3.8rem 0 2rem; }
-  .footer-grid { display:grid; grid-template-columns:1fr .6fr 1.4fr; gap:2.5rem; }
+  .footer-grid { display:grid; grid-template-columns:1fr .8fr .7fr 1.4fr; gap:2.5rem; }
   h2 { font-size:1rem; color:#d9a03b; margin:0 0 1rem; }
+  .nap-name { font-weight:800; color:#fff9ee; }
+  .nap-addr,.nap-geo { margin:.2rem 0; }
   p { color:#cfc3b4; max-width:60ch; font-size:.9rem; }
   a { display:block; text-decoration:none; color:#eee4d5; margin:.5rem 0; }
   a:hover { color:#d9a03b; }

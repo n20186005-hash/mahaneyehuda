@@ -1,5 +1,18 @@
+# תלות ובנייה — לא נדרשים להעלאה ל-Cloudflare Workers
 node_modules/
-dist/
 .astro/
-.wrangler/
+dist/
+*.log
+install.log
+build.log
+done.txt
+
+# מטמונים וקבצי מערכת
 .DS_Store
+Thumbs.db
+.codebuddy/
+
+# סביבות מקומיות
+.env
+.env.*
+!.env.example

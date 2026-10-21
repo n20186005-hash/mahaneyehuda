@@ -1,0 +1,1 @@
+const toggle=document.getElementById('menu-toggle'),nav=document.getElementById('main-nav');toggle?.addEventListener('click',()=>{const open=toggle.getAttribute('aria-expanded')!=='true';toggle.setAttribute('aria-expanded',String(open));nav?.setAttribute('data-open',String(open));});

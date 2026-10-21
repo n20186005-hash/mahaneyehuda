@@ -1,39 +1,9 @@
-# מסירת פרויקט — רישום אימות
+# Local verification — 20 October 2026
 
-## בדיקות סטטיות שהושלמו
+Required versions are pinned in package.json and the lockfile. Run `pnpm install --frozen-lockfile`, `pnpm check`, `pnpm build`, `pnpm audit`, `pnpm audit:language`, `node scripts/verify-output.mjs` and `node scripts/behavior-test.mjs`.
 
-- כל גרסאות התלויות הישירות ב־`package.json` נעולות לגרסה מלאה ומדויקת.
-- `packageManager` ו־`engines.pnpm` נעולים ל־`pnpm@11.23.0`; Node.js נעול ל־`24.19.0` ב־`engines` וב־`.node-version`.
-- TypeScript `6.0.3` נמצא בטווח ה־peer של `@astrojs/check@0.9.10`: `^5.0.0 || ^6.0.0`.
-- `pnpm-lock.yaml` מגיע מפתרון pnpm אמיתי ומסונכרן לסט הגרסאות הישירות הרשום בפרויקט.
-- אין `pnpm-workspace.yaml` בפרויקט החד־חבילה.
-- כתובת האתר מוגדרת רק דרך `site` ב־`astro.config.mjs`; כשאין דומיין, sitemap אינו מופעל ותגי URL מוחלטים של האתר אינם מקבלים דומיין דמה.
-- אין sitemap ידני ואין `lastmod` שהומצא.
-- iframe של Google Maps הותאם לעברית/ישראל (`he`, `il`).
-- פרטיות, תנאי שימוש והגדרות Cookie הם עמודים נפרדים.
-- GA4 נטען רק לאחר הסכמה לניתוח; אחסון פרסום, נתוני משתמש לפרסום והתאמה אישית נשארים חסומים.
-- חזית האתר מוגדרת `lang="he" dir="rtl"` ונבדקה לשאריות שפה/אזור שאינן שייכות.
-- Logo, favicon ו־Open Graph card נמצאים מקומית. תצלומי השוק הם תצלומים אמיתיים ממקורות מורשים, אך נשארים חיצוניים בשל חסימת הורדת בינארי בסביבת ההרצה.
+The output verifier checks all five Hebrew RTL HTML pages, four original sitemap routes, unique page structure/metadata, local asset references, exact visible/schema FAQ agreement, explicit image source/licence records and absence of stale live-weather/foreign-image references. Behavior tests exercise redirects with query preservation, ASSETS 404 propagation and consent refusal/withdrawal/regrant/storage failures.
 
-## חריגת טריות גרסה
+Worker configuration uses the existing Cloudflare project name identified by its official repository build check, `mahaneyehuda`, with a local `ASSETS` binding. A dry-run or local HTTP success does not establish production readiness or deployment. The prior base-commit Cloudflare failure is historical, not a verdict on this source.
 
-בזמן בדיקת המסירה npm מציג Astro `7.2.6` כגרסה היציבה החדשה. ה־lockfile האמיתי הזמין בפרויקט מסונכרן ל־Astro `7.2.4`. מאחר שהסנדבוקס אינו יכול להגיע ל־npm registry, לא ניתן לייצר כאן lockfile אמיתי ומאומת ל־`7.2.6`. לא בוצעה עריכה ידנית של lockfile, כדי לא להציג פתרון תלות מומצא כפתרון אמיתי.
-
-לכן, הדרישה המילולית “הגרסה היציבה החדשה ביותר” של Astro עדיין דורשת ריצה אחת בסביבת CI עם גישה ל־npm: לעדכן ל־`7.2.6` (או לגרסה היציבה שתהיה אחרונה באותו רגע), ליצור lockfile מחדש, ואז להריץ את כל שערי האימות.
-
-## מגבלת סביבת ההרצה
-
-סביבת הסנדבוקס הנוכחית אינה יכולה לפתור DNS אל `registry.npmjs.org`. לכן Corepack נעצר לפני הורדת pnpm, ולא ניתן לסמן באופן כוזב את שלבי ההתקנה והבנייה כעוברים.
-
-שער הקבלה הנדרש בסביבה עם גישה ל־npm:
-
-```bash
-rm -rf node_modules dist .astro
-CI=1 corepack pnpm install --frozen-lockfile
-pnpm check
-pnpm build
-pnpm run audit
-pnpm run audit:language
-```
-
-לאחר build, אם `site` עדיין ריק, לא אמור להיווצר sitemap. לאחר הגדרת דומיין אמיתי יחיד ב־`astro.config.mjs`, יש לוודא שכל כתובות ה־sitemap משתמשות בו ושאין `lastmod` מומצא.
+Actual browser checks, desktop/mobile geometry and menu interaction, image loading, exact target build readiness, production domain/HTTP/www/TLS and live 404 verification remain release-coordinator gates. Source/CSS presence or VM tests do not substitute for those observations.

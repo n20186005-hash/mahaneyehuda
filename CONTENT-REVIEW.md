@@ -1,22 +1,11 @@
-# 内容与落地页专业度复核
+# Content review — 20 October 2026
 
-## 已落实的专业化改进
+The original Hebrew RTL guide and all four public routes remain. The map listing snapshot supplies address, pin, rating/count and displayed weekly hours, visibly dated and scoped to that third-party listing. No recurring hours, free-entry or third-party rating assertion remains in JSON-LD. Individual shops, evening operations, holidays, current security and live transit are not established by that snapshot.
 
-1. **首屏不是通用旅游模板**：采用耶路撒冷石材色、石榴红、橄榄绿与金色，并用拱券 + 石榴符号建立与耶路撒冷、市场食品文化相符的视觉识别。
-2. **历史从“故事”升级为“可核查的城市史”**：覆盖 19 世纪末城外扩张、Beit Yaakov 市集、英属托管时期整治、1931 年伊拉克市场、21 世纪更新与夜间文化，不编造传说。
-3. **把“市场开放”和“夜生活营业”分开**：避免把个别餐饮场所夜间营业误写成市场整体营业。
-4. **实用信息结构完整**：门票/费用、最佳时段、建议停留、机场、铁路、轻轨、公交、出租车、私家车、停车、WC、无障碍、住宿类型、商超类型、燃油/充电、支付、药房/健康服务均已覆盖。
-5. **中立非商业**：不列具体餐馆、酒店、停车场、商店或充电运营商，不做排名、返佣导流或“必买”式推荐。
-6. **独立法律页面**：隐私政策、服务条款、Cookie 设置均为独立二级页面；分析 Cookie 只有明确同意后才加载 GA4，广告/个性化营销保持关闭。
-7. **结构化数据**：主页含 TouristAttraction + LocalBusiness JSON-LD 与 FAQPage JSON-LD；站点自身的绝对 URL 仅在 Astro `site` 有值时生成。
-8. **来源透明**：页面单独展示耶路撒冷市政府、耶路撒冷发展局旅游部门、以色列旅游部、机场管理局与耶路撒冷交通规划官方入口，并在页脚声明无官方隶属与无商业推荐。
-9. **SEO/分享基础**：标题、描述、Open Graph、favicon、Apple Touch icon、canonical 降级逻辑、条件 sitemap 已配置；新增 1200×630 本地 OG 卡片。
-10. **语言一致**：公开页面统一为希伯来语，`lang="he" dir="rtl"`，Google Maps embed 已从 `zh-CN` 改为 `he/il`。
+The commercial market information site's [FAQ](https://en.machne.co.il/category/faq) identifies three toilets with different gender allocation and describes parking and ordinary hours. Those are attributed source descriptions, not a same-day facility or accessibility inspection. Its [history](https://en.machne.co.il/category/history) distinguishes the unexecuted Ashbee plan from later merchant-led permanent markets; the guide corrects that distinction. The 1931 Iraqi-market context remains.
 
-## 上线后仍值得继续做的增强
+The [Airports Authority](https://www.iaa.gov.il/en/airports/ben-gurion/directions/directions-list/?categoryId=10450) refers travellers to Israel Railways schedules and licensed taxi arrangements. Rail, tram, parking and lawful drop-off details require a current operator check. Nearby destinations and half-day suggestions remain conditional planning examples, not measured routes or guaranteed duration. The Maps accessible-entrance label is not presented as a complete route audit.
 
-- **把实景照片完全本地化**：本次执行环境无法从 Wikimedia/Unsplash CDN 下载二进制文件，因此源码保留了已核对的真实照片外链。联网 CI 中应下载到 `public/images/`，保留署名与许可说明，再切换为本地路径。
-- **正式域名确定后再启用 sitemap**：只需修改 `astro.config.mjs` 的唯一 `site` 值并重建，不要在页面重复写域名。
-- **高频变化信息定期复核**：营业时间、公共交通、厕所开放情况、施工与无障碍状态属于容易变化的信息，建议建立编辑复核周期，但页面本身不要伪造“最后核对精确日期”。
-- **有条件时增加官方无障碍来源**：目前文案采用保守描述；如果市政府/市场管理方未来发布结构化无障碍地图，可进一步细化入口、坡道与无障碍卫生间信息。
-- **性能优化**：照片本地化后生成 AVIF/WebP 多尺寸与 `srcset`，可以明显减少移动端首屏流量。
+Five exact-source photos are local, with visible per-file source/licence/date/change credits; see PHOTO-CREDITS.md. The unverified night-image chain was removed while retaining evening content. Static build-time weather was replaced by an [official forecast link](https://ims.gov.il/he/Forecasts); no live weather claim or forecast API remains.
+
+Consent now defaults to refusal, tolerates null/malformed/blocked storage, applies withdrawal immediately, retains a same-tab denial veto and supports explicit regrant. Only this site's legacy SW/cache is retired. Worker normalizes protocol/www/path with query preserved, and preserves true 404/noindex. Local behavior tests support these mechanisms; browser and production acceptance remain separate.

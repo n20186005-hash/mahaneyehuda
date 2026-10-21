@@ -57,7 +57,7 @@ pnpm deploy
 
 - 图标 `public/icon-192.png`、`icon-512.png`、`icon-512-maskable.png`（由 `public/logo.svg` 的图形绘制）；
 - `start_url` 与 `scope` 均为 `/`，`display: standalone`；
-- Service Worker：页面 network-first（保证内容更新优先），静态资源 cache-first；注册脚本在 `src/layouts/BaseLayout.astro`。
+- Legacy Service Worker is retired by owned script/scope checks; this release does not register an offline cache.
 
 ## Google Analytics 与 Cookie 同意
 

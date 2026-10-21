@@ -4,7 +4,8 @@ import Logo from './Logo.astro';
 <header class="site-header">
   <div class="container bar">
     <Logo />
-    <nav aria-label="ניווט ראשי">
+    <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="main-nav" type="button">תפריט</button>
+    <nav id="main-nav" aria-label="ניווט ראשי">
       <a href="/#history">הסיפור</a>
       <a href="/#visit">תכנון ביקור</a>
       <a href="/#transport">הגעה</a>
@@ -12,11 +13,13 @@ import Logo from './Logo.astro';
     </nav>
   </div>
 </header>
+<script src="/menu.js" is:inline defer></script>
 <style>
+  .menu-toggle{display:none;border:1px solid #806e56;background:#fffaf2;padding:.6rem;border-radius:.6rem}
   .site-header { position: sticky; top: 0; z-index: 50; border-bottom: 1px solid rgba(29,24,19,.1); background: rgba(255,250,242,.9); backdrop-filter: blur(14px); }
   .bar { min-height: 74px; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
   nav { display: flex; gap: 1.2rem; font-size: .92rem; font-weight: 700; }
   nav a { text-decoration: none; color: #4e463e; }
   nav a:hover { color: #a53b35; }
-  @media (max-width: 720px) { nav { display: none; } }
+  @media (max-width: 720px) { .bar{flex-wrap:wrap}.menu-toggle{display:block}nav{display:none;flex-basis:100%;flex-wrap:wrap;padding-bottom:1rem}nav[data-open="true"]{display:flex} }
 </style>

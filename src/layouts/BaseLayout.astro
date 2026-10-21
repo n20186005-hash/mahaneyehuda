@@ -17,7 +17,7 @@ const canonical = Astro.site
   : new URL(Astro.url.pathname, SITE_URL).href;
 const ogImage = Astro.site ? new URL(image, Astro.site).href : image;
 const pageTitle = withSiteName(title);
-const ogImageAlt = `${ATTRACTION.nameHe} (${ATTRACTION.nameEn}) — ${ATTRACTION.cityHe}, ${ATTRACTION.countryHe}`;
+const ogImageAlt = `סמל קשת ורימון של מדריך ${ATTRACTION.nameHe}; איור, לא תצלום`;
 ---
 <!doctype html>
 <html lang="he" dir="rtl">
@@ -47,10 +47,10 @@ const ogImageAlt = `${ATTRACTION.nameHe} (${ATTRACTION.nameEn}) — ${ATTRACTION
     <meta property="og:site_name" content={SITE_NAME} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage} />
+    <meta property="og:image" content={ogImage} /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={ogImageAlt} />
     {canonical && <meta property="og:url" content={canonical} />}
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content={pageTitle} /><meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
     <meta name="twitter:image:alt" content={ogImageAlt} />
     <title>{pageTitle}</title>
@@ -60,55 +60,13 @@ const ogImageAlt = `${ATTRACTION.nameHe} (${ATTRACTION.nameEn}) — ${ATTRACTION
     <Header />
     <main id="content"><slot /></main>
     <Footer />
-    <script is:inline>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(() => {});
-        });
-      }
-    </script>
-    <script is:inline>
-      (() => {
-        const GA_ID = 'G-HXM22WWPKP';
-        const KEY = 'mahaneYehudaCookiePreferences';
-        let loaded = false;
-        function loadAnalytics() {
-          if (loaded || document.querySelector('script[data-ga-loader]')) return;
-          loaded = true;
-          const script = document.createElement('script');
-          script.async = true;
-          script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
-          script.dataset.gaLoader = 'true';
-          document.head.appendChild(script);
-          window.dataLayer = window.dataLayer || [];
-          window.gtag = function(){ window.dataLayer.push(arguments); };
-          window.gtag('consent', 'default', {
-            analytics_storage: 'granted',
-            ad_storage: 'denied',
-            ad_user_data: 'denied',
-            ad_personalization: 'denied'
-          });
-          window.gtag('js', new Date());
-          window.gtag('config', GA_ID);
-        }
-        function readPreferences() {
-          try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { return {}; }
-        }
-        if (readPreferences().analytics === true) loadAnalytics();
-        window.addEventListener('cookie-preferences-updated', (event) => {
-          if (event.detail?.analytics === true) {
-            loadAnalytics();
-            if (window.gtag) window.gtag('consent', 'update', { analytics_storage: 'granted' });
-          } else if (window.gtag) {
-            window.gtag('consent', 'update', {
-              analytics_storage: 'denied',
-              ad_storage: 'denied',
-              ad_user_data: 'denied',
-              ad_personalization: 'denied'
-            });
-          }
-        });
-      })();
-    </script>
+    <aside id="cookie-banner" data-open="false" class="cookie-banner" aria-label="בחירת ניתוח">
+      <p>ניתוח Google Analytics כבוי עד להסכמה. מפת Google נטענת בנפרד.</p>
+      <button id="cookies-essential" type="button">דחיית ניתוח</button>
+      <button id="cookies-accept" type="button">הסכמה לניתוח</button>
+      <a href="/cookies/">הגדרות</a><p id="cookie-banner-status" role="status"></p>
+    </aside>
+    <script src="/consent.js" is:inline defer></script>
+    <script src="/retire-offline.js" is:inline defer></script>
   </body>
 </html>

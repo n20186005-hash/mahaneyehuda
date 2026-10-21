@@ -28,20 +28,18 @@ export const ATTRACTION = {
   streetAddressHe: 'רחוב אגריפס 90',
   streetAddressEn: 'Agripas St 90',
   // מיקום
-  latitude: 31.785556,
-  longitude: 35.212222,
-  plusCode: 'Q6M7+W3',
-  plusCodeLabel: 'Q6M7+W3 ירושלים, ישראל',
+  latitude: 31.7848355,
+  longitude: 35.2126355,
   // מפות
   mapsShareUrl: 'https://maps.app.goo.gl/v8vQ8S95CBASWi8r7',
   mapsEmbedSrc:
-    'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6041.062666109796!2d35.21006057730445!3d31.78483547409407!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1502d628437b49bd%3A0xe1566ca192ce80f!2z6ams5ZOI5bC86IC26IOh6L6-5biC5Zy6!5e1!3m2!1she!2sil!4v1787566630322!5m2!1she!2sil',
+    'https://www.google.com/maps?q=31.7848355,35.2126355&hl=he&output=embed',
   // קטגוריה ודירוג (מסונכרן מ-Google Maps)
   categoryHe: 'שוק עירוני',
   ratingValue: 4.6,
-  ratingCount: 66960,
+  ratingCount: 67124,
   ratingSourceNote: 'Google Maps',
-  ratingSyncedAt: 'ספטמבר 2026',
+  ratingSyncedAt: '20 באוקטובר 2026',
   // אתרים סמכותיים המזהים את אותה ישות
   sameAs: [
     'https://maps.app.goo.gl/v8vQ8S95CBASWi8r7',

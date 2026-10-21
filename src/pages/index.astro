@@ -5,33 +5,25 @@ import { ATTRACTION, SITE_URL } from '../data/market';
 
 const siteUrl = Astro.site ? new URL('/', Astro.site).href : SITE_URL;
 const heroImage = new URL('/og-card.png', siteUrl).href;
-const heroPhoto =
-  'https://upload.wikimedia.org/wikipedia/commons/5/5b/Mahane_Yehuda_%28I%29_%2845298221191%29.jpg';
+import { getImage } from 'astro:assets';
+import heroOriginal from '../assets/market-2018.jpg';
+const heroPhoto = (await getImage({src:heroOriginal,width:1920,format:'webp',quality:82})).src;
 
 const marketFullName = `${ATTRACTION.nameHe} (${ATTRACTION.nameEn})`;
 const addressLineHe = `${ATTRACTION.streetAddressHe}, ${ATTRACTION.cityHe}`;
-const geoHierarchy = `${ATTRACTION.nameHe} · ${ATTRACTION.cityHe} · ${ATTRACTION.regionHe} · ${ATTRACTION.countryHe}`;
 const ratingLabel = `${ATTRACTION.ratingValue} / 5`;
 const ratingCountLabel = ATTRACTION.ratingCount.toLocaleString('he-IL');
 
 const attractionSchema = {
   '@context': 'https://schema.org',
-  '@type': ['TouristAttraction', 'LocalBusiness'],
+  '@type': 'TouristAttraction',
   '@id': `${siteUrl}#attraction`,
   name: ATTRACTION.nameHe,
   alternateName: [...ATTRACTION.alternateNames],
   description: `מדריך מבקרים מקיף ל${marketFullName} ב${ATTRACTION.cityHe}, ${ATTRACTION.regionHe}, ${ATTRACTION.countryHe}: היסטוריה, מיקום, שעות פעילות, הגעה, נגישות ושאלות נפוצות.`,
   url: siteUrl,
-  logo: heroImage,
-  currenciesAccepted: 'ILS',
-  areaServed: {
-    '@type': 'City',
-    name: ATTRACTION.cityHe,
-    address: { '@type': 'PostalAddress', addressLocality: ATTRACTION.cityHe, addressCountry: ATTRACTION.countryCode }
-  },
-  image: [heroImage, heroPhoto],
-  isAccessibleForFree: true,
-  priceRange: 'כניסה חופשית',
+  logo: new URL('/logo.svg', siteUrl).href,
+  image: [heroImage, new URL(heroPhoto, siteUrl).href],
   address: {
     '@type': 'PostalAddress',
     streetAddress: `${ATTRACTION.streetAddressHe} (${ATTRACTION.streetAddressEn})`,
@@ -45,33 +37,25 @@ const attractionSchema = {
     longitude: ATTRACTION.longitude
   },
   hasMap: ATTRACTION.mapsShareUrl,
-  sameAs: [...ATTRACTION.sameAs],
-  openingHoursSpecification: [
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Sunday','Monday','Tuesday','Wednesday','Thursday'], opens: '08:00', closes: '19:00' },
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Friday', opens: '08:00', closes: '15:00' }
-  ],
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: String(ATTRACTION.ratingValue),
-    ratingCount: ATTRACTION.ratingCount,
-    bestRating: '5',
-    worstRating: '1'
-  }
+  sameAs: [...ATTRACTION.sameAs]
+
 };
 
 const faqs = [
-  ['איפה נמצא שוק מחנה יהודה — Mahaneh Yehudah Market?', `השוק נמצא ב${ATTRACTION.cityHe}, ${ATTRACTION.regionHe}, ${ATTRACTION.countryHe}: ${ATTRACTION.streetAddressHe} (${ATTRACTION.streetAddressEn}). לניווט מדויק אפשר להשתמש ב־Plus Code ${ATTRACTION.plusCode} או בקישור המפה שבעמוד זה.`],
-  ['כמה זמן כדאי להקדיש לביקור בשוק מחנה יהודה?', `רוב המבקרים מסתפקים בכשעה וחצי עד שלוש שעות. מי שמשלב סיור בשכונת נחלאות או המשך אל העיר העתיקה יכול להקדיש חצי יום שלם ל${ATTRACTION.cityHe}.`],
-  ['האם הכניסה לשוק מחנה יהודה כרוכה בתשלום?', 'לא. הכניסה לרחובות השוק חופשית. מזון, קניות, סיורים או פעילויות פרטיות הם בתשלום נפרד ובהתאם לבחירה.'],
+  ['איפה נמצא שוק מחנה יהודה — Mahaneh Yehudah Market?', `השוק נמצא ב${ATTRACTION.cityHe}, ${ATTRACTION.regionHe}, ${ATTRACTION.countryHe}: ${ATTRACTION.streetAddressHe} (${ATTRACTION.streetAddressEn}). הסיכה במפה היא נקודת ייחוס למקום, לא כניסה או מסלול נגיש מאומת; השתמשו בקישור המפה ובדקו את הכניסה הרצויה.`],
+  ['כמה זמן כדאי להקדיש לביקור בשוק מחנה יהודה?', `דוגמת תכנון היא כשעה וחצי עד שלוש שעות, לא זמן השלמה שנמדד. חצי יום עם נחלאות או העיר העתיקה הוא רעיון מותנה: בדקו פתיחה, מסלול נוכחי והקצב האישי לפני שילוב מקומות נפרדים.`],
+  ['האם הכניסה לשוק מחנה יהודה כרוכה בתשלום?', 'השוק הוא מרחב רחובות ועסקים. תנאי הכניסה והוצאות הביקור הנוכחיים לא אומתו בנפרד; מזון, קניות ופעילות פרטית תלויים בספק. בדקו את התנאים והמחיר לפני הזמנה.'],
   ['מתי כדאי להגיע?', 'לביקור נוח יחסית כדאי לבחור ביום חול בשעות הבוקר המאוחרות או בצהריים. שישי בבוקר מעניק אווירת קניות חזקה לפני שבת, אך גם צפוף יותר. שעות הפעילות עשויות להשתנות בערבי חג ובחגים.'],
-  ['האם השוק פתוח בשבת?', 'דוכני השוק המסורתיים סגורים בשבת. פעילות ערב של עסקים פרטיים בסביבה משתנה ממקום למקום ואינה מעידה על פתיחת השוק כולו.'],
-  ['יש שירותים ציבוריים?', 'כן. במתחם מוכרים שלושה מוקדים: באזור רחוב עץ חיים ליד הכניסה מאגריפס, באזור רחוב השזיף פינת מחנה יהודה, וברחוב התפוח פינת מחנה יהודה. חלוקת תאי נשים וגברים אינה זהה בכל מוקד, ולכן יש להיעזר בשילוט במקום.'],
-  ['האם השוק נגיש לכיסאות גלגלים ולעגלות?', 'הצירים הראשיים בדרך כלל מישוריים ונגישים יחסית, אך חלק מהמעברים צרים, עמוסים או בעלי ספים. נגישות בתוך חנויות ושירותים פרטניים משתנה; מומלץ להגיע בשעות פחות עמוסות.'],
-  ['איך מגיעים מנתב״ג?', 'אפשר להגיע ברכבת לירושלים–יצחק נבון, ומשם להמשיך ברכבת הקלה לכיוון מרכז העיר ולרדת בתחנת מחנה יהודה. קיימת גם אפשרות למונית מורשית מהשדה.'],
-  ['אפשר להגיע ברכב פרטי?', 'כן, אך החניה במרכז העיר מוגבלת וברובה בתשלום, והרחובות סביב השוק עמוסים בשעות השיא. תחבורה ציבורית או חנה־וסע בשילוב הרכבת הקלה הם לרוב פתרון פשוט יותר.'],
+  ['האם השוק פתוח בשבת?', 'ברשומת Google Maps שנבדקה ב־20 באוקטובר 2026 שבת מסומנת כסגורה. זהו רישום השוק, לא לוח של כל דוכן, בר או חג; אשרו את יום הביקור עם העסק הרצוי.'],
+  ['יש שירותים ציבוריים?', 'באתר המידע המסחרי של השוק, FAQ שנבדק ב־20 באוקטובר 2026, מפורטים שלושה מוקדים: באזור רחוב עץ חיים ליד הכניסה מאגריפס (נשים), ברחוב השזיף פינת מחנה יהודה (נשים וגברים), וברחוב התפוח פינת מחנה יהודה (גברים). חלוקת תאי נשים וגברים אינה זהה בכל מוקד, לכן בדקו שילוט ומצב פתיחה במקום; זמינות ונגישות היום לא אומתו.'],
+  ['האם השוק נגיש לכיסאות גלגלים ולעגלות?', 'ברשומת המפה מופיע סימון כניסה נגישה, אך זו אינה בדיקת מסלול מלא. אשרו מראש רוחב מעבר, ספים, שיפועים, שירותים וכניסה לעסק הרצוי; אין כאן מסלול מאומת לכיסא גלגלים.'],
+  ['איך מגיעים מנתב״ג?', 'אפשרות לתכנון היא רכבת לירושלים–יצחק נבון והמשך לתחנת מחנה יהודה, רק אם מפעילי הרכבת והרכבת הקלה מאשרים את השירות והחיבור בתאריך הרצוי. רשות שדות התעופה מפרטת גם מוניות מורשות; בדקו הסדרים ומחיר לפני הנסיעה.'],
+  ['אפשר להגיע ברכב פרטי?', 'אפשר לתכנן הגעה ברכב לאחר בדיקת הסדרי התנועה והחניה ביום הנסיעה. אתר השוק מזכיר חניונים בתשלום; אשרו מפעיל, מחיר וגישה והשוו למסלול תחבורה שפועל בתאריך הרצוי.'],
   ['האם כל האוכל בשוק כשר?', 'לא ניתן להניח שכל עסק פועל תחת אותה השגחה. מי שנדרש לכשרות מסוימת צריך לבדוק תעודה תקפה והיקף השגחה בכל נקודת מכירה בנפרד.'],
-  ['מתי שוק מחנה יהודה נסגר?', 'ימות החול (ראשון–חמישי) הדוכנים פעילים עד בערך 19:00. ביום שישי הם נסגרים מוקדם יותר — בדרך כלל סביב 15:00, לפני כניסת השבת. בשבת השוק המסורתי סגור כולו; עסקים פרטיים באזור פועלים לפי לוח משלהם ואינם מעידים על פתיחת השוק.'],
-  ['איפה חניון שוק מחנה יהודה?', 'חניה ציבורית בתשלום נמצאת במרכז העיר סביב השוק, בין היתר ליד רחוב אגריפס ובסביבת תחנת הרכבת הקלה. הזמינות משתנה ומומלץ להשתמש בחניון ציבורי ולהמשיך ברגל או ברכבת הקלה, כדי להימנע מחיפוש מקום חניה ברחובות הצפופים של מרכז העיר.']
+  ['מתי שוק מחנה יהודה נסגר?', 'לפי רשומת Google Maps מ־20 באוקטובר 2026: א׳–ה׳ 08:00–19:00, ו׳ 08:00–15:00, שבת סגור. אלה שעות הרשומה בלבד, לא אישור לכל דוכן, פעילות ערב או חג. אתר השוק מזכיר חריגי שבת וחג; בדקו את העסק והתאריך הרצויים.'],
+  ['האם שעות השוק בחג או ביום העצמאות זהות ליום חול?', 'אין להסיק זאת מלוח שבועי רגיל. אתר המידע של השוק מזכיר חריגי חגים; לא אומתו כאן שעות לתאריך חג מסוים. בדקו את העסק הרצוי, הודעות עירייה ולוחות מפעילי התחבורה לתאריך הנסיעה לפני היציאה.'],
+  ['מתי הוקם שוק מחנה יהודה?', 'סקירת ההיסטוריה באתר השוק מתארת שוק שהתפתח בסוף המאה ה־19 ולא אירוע פתיחה יחיד. חנויות קבע נוספו בשלבים; אזור נוסף, המזוהה עם סוחרים עיראקים, נפתח ב־1931. יש להבחין בין תחילת המסחר לבין הרחבות מאוחרות.'],
+  ['איפה חניון שוק מחנה יהודה?', 'לא אומת חניון מסוים או מקום פנוי. בדקו מול מפעיל החניון את המיקום, שעות הפתיחה, תעריף, גובה וגישה למסלול המבוקש, ופעלו לפי השילוט וההסדרים ביום ההגעה.']
 ];
 const faqSchema = {
   '@context': 'https://schema.org',
@@ -79,13 +63,13 @@ const faqSchema = {
   mainEntity: faqs.map(([q,a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } }))
 };
 ---
-<BaseLayout title={`שוק מחנה יהודה, ירושלים — מדריך תיירים`} description={`מדריך תיירים עצמאי וללא מטרות רווח לשוק מחנה יהודה (Mahaneh Yehudah Market) בירושלים, מחוז ירושלים, ישראל: היסטוריה, שעות פעילות, תחזית מזג אוויר, הגעה מנתב״ג, תחבורה ציבורית, נגישות, אוכל, חניה, אתרים סמוכים ושאלות נפוצות.`}>
+<BaseLayout title={`שוק מחנה יהודה, ירושלים — מדריך תיירים`} description={`מדריך תיירים עצמאי וללא מטרות רווח לשוק מחנה יהודה (Mahaneh Yehudah Market) בירושלים, מחוז ירושלים, ישראל: היסטוריה, שעות רשומה, קישור לתחזית רשמית, הגעה מנתב״ג, תחבורה ציבורית, נגישות, אוכל, חניה, אתרים סמוכים ושאלות נפוצות.`}>
   <script type="application/ld+json" is:inline set:html={JSON.stringify(attractionSchema)}></script>
   <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)}></script>
 
   <section class="hero">
     <div class="hero-media" aria-hidden="true">
-      <img src={heroPhoto} alt={`${ATTRACTION.nameHe} (${ATTRACTION.nameEn}) — המראה המרכזי של השוק ב${ATTRACTION.cityHe}, ${ATTRACTION.countryHe}`} fetchpriority="high" />
+      <img src={heroPhoto} width="1920" height="1280" alt={`${ATTRACTION.nameHe} (${ATTRACTION.nameEn}) — המראה המרכזי של השוק ב${ATTRACTION.cityHe}, ${ATTRACTION.countryHe}`} fetchpriority="high" />
     </div>
     <div class="hero-shade"></div>
     <div class="container hero-inner">
@@ -100,15 +84,15 @@ const faqSchema = {
         </div>
       </div>
       <aside class="quick" aria-label="מידע מהיר">
-        <div><strong>חינם</strong><span>כניסה לשוק</span></div>
+        <div><strong>בדיקה מראש</strong><span>תנאי כניסה ועלויות</span></div>
         <div><strong>א׳–ה׳</strong><span>08:00–19:00</span></div>
         <div><strong>ו׳</strong><span>08:00–15:00</span></div>
-        <div><strong>שבת</strong><span>השוק סגור</span></div>
+        <div><strong>שבת</strong><span>סגור ברשומה</span></div>
         <div><strong>{ratingLabel}</strong><span>{ratingCountLabel} ביקורות</span></div>
-        <p class="rating-note">דירוג {ATTRACTION.ratingSourceNote} מסונכרן {ATTRACTION.ratingSyncedAt}.</p>
+        <p class="rating-note">רשומת {ATTRACTION.ratingSourceNote} נבדקה {ATTRACTION.ratingSyncedAt}; שעות ודירוג צד שלישי, לא של כל עסק או חג.</p>
       </aside>
     </div>
-    <p class="photo-credit">צילום: Emilio García · Wikimedia Commons · CC BY-SA 2.0</p>
+    <p class="photo-credit">צילום: Emilio García · 10.8.2018 · <a href="#photo-credits">מקור, רישיון ושינויים</a></p>
   </section>
 
   <section class="section intro" id="overview">
@@ -126,9 +110,8 @@ const faqSchema = {
         <div class="facts">
           <div><span>כתובת</span><strong>רחוב אגריפס 90, ירושלים</strong></div>
           <div><span>אופי המקום</span><strong>שוק עירוני היסטורי ופתוח לציבור</strong></div>
-          <div><span>משך מומלץ</span><strong>כשעה וחצי עד שלוש שעות</strong></div>
+          <div><span>דוגמת משך, לפי הקצב</span><strong>כשעה וחצי עד שלוש שעות</strong></div>
           <div><span>שפה וסביבה</span><strong>עברית; מרכז עיר צפוף והליכתי</strong></div>
-          <div><span>Plus Code</span><strong>{ATTRACTION.plusCodeLabel}</strong></div>
           <div><span>קואורדינטות</span><strong>{ATTRACTION.latitude}, {ATTRACTION.longitude}</strong></div>
           <div><span>דירוג מבקרים</span><strong>{ratingLabel} · {ratingCountLabel} ביקורות ב־{ATTRACTION.ratingSourceNote}</strong></div>
           <div><span>כתובת לניווט באנגלית</span><strong>{ATTRACTION.streetAddressEn}, {ATTRACTION.cityEn}, {ATTRACTION.countryEn}</strong></div>
@@ -144,15 +127,15 @@ const faqSchema = {
       <h2 class="section-title">ממגרש פתוח למוסד ירושלמי<span class="section-en">History &amp; Significance of {ATTRACTION.nameEn}</span></h2>
       <div class="history-layout">
         <figure class="history-photo">
-          <img src="https://images.unsplash.com/photo-1574513828624-af4be898b59e?auto=format&fit=crop&fm=jpg&q=82&w=1800" alt="רחוב אגריפס בירושלים ליד שוק מחנה יהודה, עם חזיתות אבן ואמנות רחוב" loading="lazy" />
-          <figcaption>רחוב אגריפס ליד השוק · צילום: Laura Siegal / Unsplash</figcaption>
+          <img src="/images/agripas.jpg" alt="רחוב אגריפס בירושלים ליד שוק מחנה יהודה, עם חזיתות אבן ואמנות רחוב" loading="lazy" />
+          <figcaption>רחוב אגריפס ליד השוק · Laura Siegal · פורסם 23.11.2019 · <a href="#photo-credits">מקור ורישיון</a></figcaption>
         </figure>
         <div class="timeline">
           <article><span>סוף המאה ה־19</span><h3>השוק נוצר לצד השכונות החדשות</h3><p>כשהעיר התרחבה מערבה מחוץ לחומות, נוצרה בשטח פתוח סמוך לשכונת בית יעקב נקודת מסחר. פלאחים וסוחרים ערבים הביאו תוצרת, ותושבי השכונות היהודיות החדשות קנו בה מזון יום־יומי. השוק נקרא תחילה על שם בית יעקב.</p></article>
-          <article><span>תקופת המנדט</span><h3>מהתארגנות ספונטנית לשוק מוסדר</h3><p>בסוף שנות העשרים של המאה ה־20 החלו רשויות המנדט להסדיר את המרחב, להחליף חלק מן המבנים המאולתרים בדוכנים קבועים ולשפר קירוי ותשתיות. כך קיבל השוק צורה עירונית מוכרת יותר.</p></article>
+          <article><span>תקופת המנדט</span><h3>מהתארגנות ספונטנית לשוק מוסדר</h3><p>לפי סקירת ההיסטוריה באתר השוק, רשויות המנדט יזמו תכנון מסודר, אך תכנית אשבי לא בוצעה בשל מגבלות תקציב. חנויות קבע ויוזמות של סוחרים התפתחו בהמשך; אין לייחס את כולן לביצוע התכנית המקורית.</p></article>
           <article><span>1931</span><h3>התרחבות וסיפורי קהילות</h3><p>באותה תקופה נוספו אזורים פנימיים, ובהם מתחם שזוהה עם סוחרים מן הקהילה העיראקית. המבנה הפנימי של השוק משקף עד היום שכבות שונות של מסחר, הגירה והתבססות קהילתית בעיר.</p></article>
           <article><span>המאה ה־21</span><h3>שוק יום, תרבות ערב</h3><p>שדרוגי תשתית ויוזמות עירוניות ופרטיות חיזקו את פעילות המזון והבילוי. לאחר הסגירה של דוכנים רבים, תריסי המתכת המצוירים הופכים את המעברים למעין גלריית רחוב פתוחה — שינוי שממחיש כיצד השוק ממשיך להתאים את עצמו לעיר.</p></article>
-          <article><span>סביב 2015</span><h3>התריסים המצוירים וגלריית הרחוב</h3><p>פרויקט עיטור של תריסי המתכת הפך את המעברים לקירות ציור ענקיים. העבודה חיברה בין שיפוץ פיזי לבין זהות ויזואלית של השוק, והפכה את המקום לנושא בצילום עירוני ובסיורי תרבות — בלי לגעת באופיו כמרחב מסחר יומיומי.</p></article>
+          <article><span>אמנות רחוב</span><h3>התריסים המצוירים וגלריית הרחוב</h3><p>בתריסי השוק מופיעות עבודות אמנות רחוב; אין כאן רשימה מאומתת של ציורים הקיימים כיום. העבודה חיברה בין שיפוץ פיזי לבין זהות ויזואלית של השוק, והפכה את המקום לנושא בצילום עירוני ובסיורי תרבות — בלי לגעת באופיו כמרחב מסחר יומיומי.</p></article>
         </div>
       </div>
       <div class="story card">
@@ -163,7 +146,7 @@ const faqSchema = {
       <div class="story card">
         <p class="eyebrow">למה המידע הזה חשוב</p>
         <h3>לא צריך להמציא אגדה: הסיפור נמצא בשכבות של השוק</h3>
-        <p>החשיבות של מחנה יהודה אינה נשענת על מיתוס יחיד, אלא על תהליך עירוני: מפגש בין חקלאים וסוחרים לבין שכונות חדשות, מעבר מכלכלה של שוליים אל מרכז מסחרי, ובהמשך חיבור בין מסורת קולינרית לתרבות רחוב עכשווית. עבור אתר מידע מקצועי, הסיפור הזה מעניין יותר — ובעיקר ניתן לבדיקה מול מקורות תיעוד ורשמיים.</p>
+        <p>החשיבות של מחנה יהודה אינה נשענת על מיתוס יחיד, אלא על תהליך עירוני: מפגש בין חקלאים וסוחרים לבין שכונות חדשות, מעבר מכלכלה של שוליים אל מרכז מסחרי, ובהמשך חיבור בין מסורת קולינרית לתרבות רחוב עכשווית. אפשר לקרוא את הרקע בסקירת ההיסטוריה המקושרת של אתר השוק ולהבחין בינו לבין מידע תפעולי עכשווי.</p>
       </div>
     </div>
   </section>
@@ -183,9 +166,9 @@ const faqSchema = {
       </div>
     </div>
     <div class="container photo-strip">
-      <figure><img src="https://images.unsplash.com/photo-1645028846276-397e358c463c?auto=format&fit=crop&fm=jpg&q=80&w=1500" alt="מבחר אגוזים בשוק מחנה יהודה" loading="lazy" /><figcaption>צילום: Ilanit Ohana / Unsplash</figcaption></figure>
-      <figure><img src="https://images.unsplash.com/photo-1645028846507-5c7ff1ba1266?auto=format&fit=crop&fm=jpg&q=80&w=1500" alt="רימונים טריים בשוק מחנה יהודה" loading="lazy" /><figcaption>צילום: Ilanit Ohana / Unsplash</figcaption></figure>
-      <figure><img src="https://images.unsplash.com/photo-1645028846076-0cf7fc06664a?auto=format&fit=crop&fm=jpg&q=80&w=1500" alt="ממתקים צבעוניים בשוק מחנה יהודה" loading="lazy" /><figcaption>צילום: Ilanit Ohana / Unsplash</figcaption></figure>
+      <figure><img src="/images/nuts.jpg" alt="מבחר אגוזים בשוק מחנה יהודה" loading="lazy" /><figcaption>Ilanit Ohana · פורסם 16.2.2022 · <a href="#photo-credits">מקור ורישיון</a></figcaption></figure>
+      <figure><img src="/images/pomegranates.jpg" alt="רימונים טריים בשוק מחנה יהודה" loading="lazy" /><figcaption>Ilanit Ohana · פורסם 16.2.2022 · <a href="#photo-credits">מקור ורישיון</a></figcaption></figure>
+      <figure><img src="/images/candies.jpg" alt="ממתקים צבעוניים בשוק מחנה יהודה" loading="lazy" /><figcaption>Ilanit Ohana · פורסם 16.2.2022 · <a href="#photo-credits">מקור ורישיון</a></figcaption></figure>
     </div>
   </section>
 
@@ -194,10 +177,10 @@ const faqSchema = {
       <p class="eyebrow">תכנון ביקור</p>
       <h2 class="section-title">להגיע מוכנים, להשאיר מקום לספונטניות<span class="section-en">Location &amp; How to Visit {ATTRACTION.shortNameEn} in {ATTRACTION.cityEn}</span></h2>
       <div class="visit-grid">
-        <article class="card big"><h3>הזמן הטוב ביותר</h3><p>יום חול בשעות הבוקר המאוחרות עד אחר הצהריים מתאים למי שרוצה לראות את השוק פעיל בלי העומס המרבי של יום שישי. שישי בבוקר הוא חוויה ירושלמית אינטנסיבית לפני שבת, אך צפוף ורועש יותר. בערב משתנה האופי: חלק מדוכני היום נסגרים, ואמנות התריסים והפעילות הלילית בולטות יותר.</p><p class="mini">שהייה מומלצת: כ־1.5–3 שעות לביקור נינוח; פחות מכך אם המטרה היא רק מעבר והתרשמות.</p></article>
-        <article class="card"><h3>כרטיסים ועלויות</h3><p>הכניסה לשוק חופשית ואין שער כניסה. קניות, אוכל, סדנאות או סיורים פרטיים הם הוצאות נפרדות. המחירים אינם אחידים, ולכן אין באתר טווח מחיר מסחרי.</p></article>
+        <article class="card big"><h3>הזמן הטוב ביותר</h3><p>יום חול בשעות הבוקר המאוחרות עד אחר הצהריים מתאים למי שרוצה לראות את השוק פעיל בלי העומס המרבי של יום שישי. שישי בבוקר הוא חוויה ירושלמית אינטנסיבית לפני שבת, אך צפוף ורועש יותר. בערב משתנה האופי: חלק מדוכני היום נסגרים, ואמנות התריסים והפעילות הלילית בולטות יותר.</p><p class="mini">דוגמת תכנון: כ־1.5–3 שעות לפי הקצב והעסקים הפתוחים; לא זמן השלמה מאומת.</p></article>
+        <article class="card"><h3>כרטיסים ועלויות</h3><p>תנאי הכניסה והעלויות הנוכחיים לא אומתו בנפרד. קניות, אוכל, סדנאות וסיורים תלויים בספק; בדקו מחיר ותנאים לפני הזמנה.</p></article>
         <article class="card"><h3>לבוש והתנהלות</h3><p>נעליים נוחות עדיפות; המעברים עלולים להיות צפופים ולעיתים רטובים. בקיץ מומלץ להצטייד במים ובהגנה מהשמש לפני ההגעה למרכז העיר.</p></article>
-        <article class="card"><h3>שישי ושבת</h3><p>לפני שבת הפעילות נוטה להסתיים מוקדם יותר. בשבת השוק המסורתי סגור. בערבי חג ובחגים ייתכנו שינויים נוספים, ולכן מומלץ לבדוק מידע סמוך לביקור.</p></article>
+        <article class="card"><h3>שישי ושבת</h3><p>ברשומת Google Maps מ־20 באוקטובר 2026 ו׳ 08:00–15:00 ושבת סגור. אתר המידע של השוק מזכיר סגירה בשבת ובחגים, אך עסקים פרטיים עשויים לפעול אחרת. בדקו את התאריך והעסק לפני נסיעה; זה אינו אישור לפעילות היום.</p></article>
       </div>
     </div>
   </section>
@@ -211,7 +194,7 @@ const faqSchema = {
       <p class="lede">לירושלים אקלים ים־תיכוני הררי: קיץ יבש וחמים, חורף גשום וקריר יחסית. הבחירה מתי לבקר תלויה בסבילות לחום, לגשם ולעומס במעברים.</p>
       <div class="season-grid">
         <article><span class="season-tag">אביב</span><h3>מרץ–מאי</h3><p>מעבר נוח, טמפרטורות נעימות ופעילות ערה. מומלץ ללבוש בשכבות — בוקר קריר וצהריים נעים. תחילת עונה טובה לצילום ברחובות.</p></article>
-        <article><span class="season-tag">קיץ</span><h3>יוני–ספטמבר</h3><p>חם ויבש; שעות השיא אחר הצהריים כבדות. עדיף ביקור מוקדם בבוקר, עם מים וקרם הגנה. חלק מדוכני היום נחים בצהריים.</p></article>
+        <article><span class="season-tag">קיץ</span><h3>יוני–ספטמבר</h3><p>חם ויבש; שעות השיא אחר הצהריים כבדות. עדיף ביקור מוקדם בבוקר, עם מים וקרם הגנה. בדקו את שעות העסק הרצוי בנפרד.</p></article>
         <article><span class="season-tag">סתיו</span><h3>אוקטובר–נובמבר</h3><p>נוח ופחות צפוף. הגשמים מתחילים לעיתים — כדאי להשאיר מטריה בתיק. עונה טובה להליכה ארוכה בנחלאות.</p></article>
         <article><span class="season-tag">חורף</span><h3>דצמבר–פברואר</h3><p>קריר וגשום, וערבים קרים. השוק פעיל פחות בערב, אך בוקר בהיר אידיאלי לצילום ולהליכה רגועה. יש להיערך למעיל ולנעליים סגורות.</p></article>
       </div>
@@ -226,10 +209,10 @@ const faqSchema = {
       <div class="route-cards">
         <article><h3>משפחות עם ילדים</h3><p>ביקור קצר יחסית (כשעה עד שעתיים) מסביב לדוכני פירות, מאפים ותבלינים. גישה נוחה מרחוב יפו, ובסיום אפשר לעבור להפסקה בגן סאקר הסמוך.</p></article>
         <article><h3>צלמים וחובבי רחוב</h3><p>בוקר מוקדם לאור רך ולפני העומס; התריסים המצוירים בולטים בצהריים ובערב. שילוב עם סמטאות נחלאות מרחיב את טווח הצילום.</p></article>
-        <article><h3>נגישות וקצב רגוע</h3><p>הצירים הראשיים מישוריים ברובם. מומלץ אמצע שבוע בבוקר, עם הפסקות בצל וישיבה, ולהימנע משעות השיא של יום שישי.</p></article>
+        <article><h3>נגישות וקצב רגוע</h3><p>סימון הכניסה הנגישה במפה אינו בדיקת כל המעברים. בדקו ספים, שיפועים, רוחב מעבר, נקודות מנוחה ושירותים מול היעד הרצוי.</p></article>
       </div>
       <div class="itinerary">
-        <div class="itin"><h3>מסלול חצי יום</h3><p>הגעה ברכבת הקלה → סיבוב בדוכנים → טעימה של מאפה או מנת רחוב → מבט במפה ויציאה להליכה קצרה בנחלאות.</p></div>
+        <div class="itin"><h3>מסלול חצי יום</h3><p>דוגמה מותנית: הגעה בתחבורה שפועלת באותו יום → דוכנים פתוחים → אוכל לפי בחירה → נחלאות, אם המסלול והגישה נבדקו. התאימו לקצב ולזמן; אין הבטחה לחצי יום או לרצף הליכה פתוח.</p></div>
         <div class="itin"><h3>מסלול יום שלם</h3><p>בוקר בשוק → צהריים באזור נחלאות → אחר הצהריים בהמשך מרכז העיר או בגן סאקר → ערב חזרה לאזור לאוכל ולתרבות רחוב.</p></div>
       </div>
     </div>
@@ -242,26 +225,25 @@ const faqSchema = {
         <h2 class="section-title">מרכבת בנתב״ג עד סמטת השוק</h2>
         <p class="lede">המרכז הירושלמי צפוף, ולכן תחבורה ציבורית בדרך כלל נוחה יותר מרכב פרטי. קווים ומסלולים משתנים; במקום להקפיא מספרי קווים באתר, עדיף לבדוק מתכנן נסיעה עדכני ביום ההגעה.</p>
       </div>
-      <div class="routes">
-        <article><div class="route-icon">✈</div><div><h3>מנמל התעופה בן־גוריון</h3><p>רכבת ישראל מחברת את נתב״ג לתחנת ירושלים–יצחק נבון. מהתחנה ממשיכים לרכבת הקלה לכיוון מרכז העיר ויורדים בתחנת מחנה יהודה, סמוך לרחוב יפו ולכניסות הצפוניות לשוק. מוניות מורשות זמינות גם בנמל התעופה.</p></div></article>
-        <article><div class="route-icon">🚊</div><div><h3>רכבת קלה</h3><p>תחנת “מחנה יהודה” של הקו האדום נמצאת על רחוב יפו, במרחק קצר מן השוק. זהו פתרון נוח למגיעים מאזור התחנה המרכזית, מרכז העיר וצירים נוספים לאורך הקו.</p></div></article>
-        <article><div class="route-icon">🚌</div><div><h3>אוטובוסים עירוניים</h3><p>רחובות יפו ואגריפס וסביבתם משורתים בקווי אוטובוס רבים. בשל שינויים תפעוליים ועבודות תשתית, יש לבדוק בזמן אמת באפליקציית תחבורה או במערכת המידע הארצית.</p></div></article>
-        <article><div class="route-icon">🚕</div><div><h3>מונית</h3><p>בקשו הורדה בשולי המתחם, ברחוב אגריפס או ברחוב יפו לפי מצב התנועה. סמטאות השוק עצמן מיועדות בעיקר להולכי רגל ואינן מקום מתאים להורדה פנימית.</p></div></article>
-        <article><div class="route-icon">🚗</div><div><h3>רכב פרטי וחניה</h3><p>החניה במרכז העיר מוגבלת וברובה בתשלום, והעומס עולה בשעות פעילות השוק. מומלץ לשקול חניון ציבורי בתשלום מחוץ למרקם הצפוף או חנה־וסע בשילוב רכבת קלה. יש לפעול לפי תמרור ותעריף עדכניים.</p></div></article>
+      <p class="notice">פרטי תחבורה כאן הם אפשרויות תכנון, לא בדיקת שירות חי או מצב בטיחות נוכחי. בדקו הודעות מפעיל, שעות, תעריפים וחיבור בפועל, לרבות שבת וחג, לפני היציאה.</p><div class="routes">
+        <article><div class="route-icon">✈</div><div><h3>מנמל התעופה בן־גוריון</h3><p>למסלול דרך נתב״ג וירושלים–יצחק נבון, בדקו קודם במתכנן רכבת ישראל שהשירות והחיבור פועלים בתאריך ובשעה הרצויים. אם החיבור מתאים, אפשר לתכנן המשך לרכבת הקלה לכיוון מרכז העיר ויורדים בתחנת מחנה יהודה, סמוך לרחוב יפו ולכניסות הצפוניות לשוק. רשות שדות התעופה מפרטת שירות מוניות מורשות; בדקו את נקודת האיסוף וההסדרים העדכניים באתר שלה.</p></div></article>
+        <article><div class="route-icon">🚊</div><div><h3>רכבת קלה</h3><p>תחנת “מחנה יהודה” של הקו האדום נמצאת על רחוב יפו, במרחק קצר מן השוק. בדקו במפעיל כפיר את התחנה והקו שפועלים ביום ההגעה, שעות ותעריף; אין כאן אישור לחיבור פעיל היום.</p></div></article>
+        <article><div class="route-icon">🚌</div><div><h3>אוטובוסים עירוניים</h3><p>למסלול באוטובוס לאזור יפו ואגריפס, בדקו תחנה, קו, תעריף ונסיעה במערכת המידע הארצית ביום ההגעה; אין כאן בדיקת שירות חי.</p></div></article>
+        <article><div class="route-icon">🚕</div><div><h3>מונית</h3><p>מסרו לנהג את היעד המדויק ואשרו איתו מקום חוקי לסיום הנסיעה לפי ההסדרים באותו יום. הסיכה במפה אינה אישור לכניסת רכב או לנקודת הורדה.</p></div></article>
+        <article><div class="route-icon">🚗</div><div><h3>רכב פרטי וחניה</h3><p>אתר השוק מזכיר אפשרויות חניה בתשלום, אך לא אומתו חניון פנוי או הסדר חנה־וסע פעיל. בדקו שעות, תעריף, מגבלות והמשך מסלול מול המפעיל; פעלו לפי השילוט העדכני.</p></div></article>
       </div>
     </div>
   </section>
 
   <section class="section map-section" id="map">
     <div class="container">
-      <div class="map-head"><div><p class="eyebrow">מפה</p><h2 class="section-title">אגריפס 90, ירושלים</h2></div><p>המפה מוטמעת ישירות מ־Google Maps ומוגדרת לעברית ולישראל. עצם טעינת המפה עשויה להעביר נתונים ל־Google בהתאם למדיניות שלה.</p></div>
+      <div class="map-head"><div><p class="eyebrow">מפה</p><h2 class="section-title">אגריפס 90, ירושלים</h2></div><p>המפה מציגה את קואורדינטות הסיכה שנרשמו ב־Google Maps, בעברית. הסיכה היא נקודת ייחוס בלבד, לא כניסה או מסלול מאומת. עצם טעינת המפה עשויה להעביר נתונים ל־Google בהתאם למדיניות שלה.</p></div>
       <div class="map-frame">
         <iframe src={ATTRACTION.mapsEmbedSrc} width="1200" height="520" style="border:0;" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title={`מפת ${ATTRACTION.nameHe} — ${addressLineHe}`}></iframe>
       </div>
       <div class="map-links">
         <a class="map-cta" href={ATTRACTION.mapsShareUrl} target="_blank" rel="noopener noreferrer">פתיחת {ATTRACTION.nameEn} ב־Google Maps</a>
         <span>כתובת: {addressLineHe} · {ATTRACTION.streetAddressEn}, {ATTRACTION.cityEn}, {ATTRACTION.countryEn}</span>
-        <span>Plus Code: {ATTRACTION.plusCodeLabel}</span>
         <span>קואורדינטות: {ATTRACTION.latitude}, {ATTRACTION.longitude}</span>
       </div>
     </div>
@@ -272,9 +254,9 @@ const faqSchema = {
       <p class="eyebrow">שירותים בסביבה</p>
       <h2 class="section-title">מה חשוב לדעת לפני שנכנסים</h2>
       <div class="facility-grid">
-        <article><span>WC</span><h3>שירותים ציבוריים</h3><p>מוכרים שלושה מוקדים באזור השוק: ליד עץ חיים/אגריפס, ברחוב השזיף פינת מחנה יהודה וברחוב התפוח פינת מחנה יהודה. החלוקה לנשים וגברים שונה בין המוקדים.</p></article>
-        <article><span>♿</span><h3>נגישות</h3><p>הצירים המרכזיים נגישים יחסית לכיסאות גלגלים ולעגלות, אך עומס, רוחב מעברים וספים בכניסות לעסקים עלולים להקשות. מומלץ להגיע בשעות רגועות יותר.</p></article>
-        <article><span>🅿</span><h3>חניה</h3><p>חניה ציבורית ופרטית בתשלום קיימת במרכז העיר, אך הזמינות משתנה. אין להסתמך על מקום פנוי בסמוך לשוק; תחבורה ציבורית עדיפה בשעות שיא.</p></article>
+        <article><span>WC</span><h3>שירותים ציבוריים</h3><p>לפי FAQ באתר המידע המסחרי של השוק (20 באוקטובר 2026), מתוארים שלושה מוקדים: ליד עץ חיים/אגריפס (נשים), ברחוב השזיף פינת מחנה יהודה (נשים וגברים) וברחוב התפוח פינת מחנה יהודה (גברים). החלוקה לנשים וגברים שונה בין המוקדים. פתיחה, ניקיון ונגישות ביום הביקור לא אומתו; בדקו במקום.</p></article>
+        <article><span>♿</span><h3>נגישות</h3><p>סימון כניסה נגישה ברשומת המפה אינו מסלול מאומת. אשרו מראש את הכניסה, השיפועים, הספים, המעברים והשירותים המתאימים לצרכים שלכם.</p></article>
+        <article><span>🅿</span><h3>חניה</h3><p>FAQ של אתר השוק מזכיר חניונים בתשלום, אך זו אינה בדיקת זמינות היום. אשרו מפעיל, מיקום, שעות, תעריף והמשך מסלול לפני הנסיעה.</p></article>
         <article><span>🛏</span><h3>לינה</h3><p>בסביבת מרכז העיר ונחלאות קיימים מלונות עירוניים, בתי הארחה ודירות אירוח. האתר אינו מדרג או ממליץ על ספק מסוים; בחרו לפי נגישות, תקציב ומדיניות ביטול.</p></article>
         <article><span>🛒</span><h3>מכולת וסופרמרקט</h3><p>השוק עצמו מספק מגוון גדול של מוצרי מזון, ובסביבת מרכז העיר קיימות חנויות מכולת וסופרמרקטים. שעות הפעילות משתנות במיוחד בשישי ובשבת.</p></article>
         <article><span>⚡</span><h3>דלק וטעינה</h3><p>ליבה עירונית צפופה אינה המקום הנוח ביותר לתדלוק. למגיעים ברכב חשמלי או ברכב שכור עדיף לתכנן תדלוק או טעינה מחוץ למתחם השוק, ולבדוק עמדות פעילות במפה עדכנית.</p></article>
@@ -286,19 +268,18 @@ const faqSchema = {
 
   <section class="section nearby" id="nearby">
     <div class="container section-grid">
-      <div><p class="eyebrow">מה עוד בסביבה</p><h2 class="section-title">להרחיב את הביקור בלי להפוך אותו למסלול קניות<span class="section-en">Landmarks &amp; Attractions Around {ATTRACTION.shortNameEn}</span></h2><p class="lede">כשמבקרים ב<strong>{ATTRACTION.nameHe}</strong> ({ATTRACTION.nameEn}) אפשר להמשיך בקלות אל נקודות עניין סמוכות, ובהן <strong>{ATTRACTION.nearby[0].nameHe}</strong> ו<strong>{ATTRACTION.nearby[1].nameHe}</strong> — שתיהן במרחק הליכה מ{ATTRACTION.streetAddressHe}.</p><p class="lede">הבחירה כאן היא במרחבים ציבוריים ובאתרי עיר, לא בעסקים. אפשר לשלב אותם לפני השוק או אחריו בהתאם לזמן ולאופי הביקור.</p></div>
+      <div><p class="eyebrow">מה עוד בסביבה</p><h2 class="section-title">להרחיב את הביקור בלי להפוך אותו למסלול קניות<span class="section-en">Landmarks &amp; Attractions Around {ATTRACTION.shortNameEn}</span></h2><p class="lede">כשמבקרים ב<strong>{ATTRACTION.nameHe}</strong> ({ATTRACTION.nameEn}) אפשר לשקול בנפרד נקודות עניין באזור, ובהן <strong>{ATTRACTION.nearby[0].nameHe}</strong> ו<strong>{ATTRACTION.nearby[1].nameHe}</strong>; אין כאן אימות של מסלול הליכה נוכחי מ{ATTRACTION.streetAddressHe}.</p><p class="lede">הבחירה כאן היא במרחבים ציבוריים ובאתרי עיר, לא בעסקים. אלה מקומות נפרדים; שילובם מותנה בפתיחה, בתנאים ובמסלול הנוכחי, ולא בזמני הליכה מאומתים.</p></div>
       <div class="near-list">
         <article><h3>נחלאות</h3><p>מקבץ שכונות היסטוריות וסמטאות אבן ממערב לשוק, המתאים להליכה שקטה יותר ולהיכרות עם ההתפתחות של ירושלים החדשה.</p></article>
         <article><h3>רחוב יפו וכיכר הדוידקה</h3><p>ציר עירוני מרכזי שממחיש את המעבר מירושלים ההיסטורית למרכז עיר מודרני, ומחובר ישירות לרכבת הקלה.</p></article>
         <article><h3>גן סאקר</h3><p>מרחב ציבורי ירוק ופתוח יחסית במערב מרכז העיר, מתאים להפסקה מהצפיפות של השוק.</p></article>
-        <article><h3>העיר העתיקה</h3><p>אינה צמודה לשוק, אך נמצאת בהמשך מרכז העיר וניתן לשלב אותה ביום טיול ארוך יותר באמצעות הליכה או תחבורה ציבורית.</p></article>
+        <article><h3>העיר העתיקה</h3><p>אינה צמודה לשוק, אך נמצאת בהמשך מרכז העיר ואפשר לשקול אותה ליום נפרד או לתכנית ארוכה יותר רק לאחר בדיקת פתיחה, תנאים והחיבור בפועל ביום הביקור.</p></article>
       </div>
     </div>
   </section>
 
   <section class="section daynight">
-    <div class="container daynight-card">
-      <div class="night-photo"><img src="https://images.unsplash.com/photo-1657095151501-cd73b0f03b77?auto=format&fit=crop&fm=jpg&q=82&w=1800" alt="פעילות ערב באזור שוק מחנה יהודה" loading="lazy" /><span>צילום: Yael Hofnung / Unsplash</span></div>
+    <div class="container daynight-card text-only">
       <div class="night-copy"><p class="eyebrow light">אותו מקום, קצב אחר</p><h2>השוק אחרי סגירת הדוכנים</h2><p>לקראת הערב חלק מהמסחר המסורתי דועך, והמרחב משנה קצב. התריסים המצוירים, התאורה והפעילות החברתית מדגישים שכבה עכשווית של מחנה יהודה. חשוב לזכור: “חיי ערב באזור” אינם זהים ל“שעות פתיחת השוק”, וכל עסק פועל לפי לוח משלו.</p></div>
     </div>
   </section>
@@ -306,7 +287,7 @@ const faqSchema = {
   <section class="section sources" id="sources">
     <div class="container section-grid">
       <div><p class="eyebrow">מקורות ומתודולוגיה</p><h2 class="section-title">מידע שניתן לבדוק</h2></div>
-      <div><p class="lede">התוכן נכתב כמדריך ידע עצמאי. עובדות היסטוריות ותפעוליות הושוו למקורות פומביים של גופים עירוניים ולאומיים, למידע תחבורה רשמי ולמקורות תיעוד מוכרים. מידע מסחרי משתנה לא נכלל כהמלצה.</p><div class="source-links">{ATTRACTION.officialLinks.map((link) => <a href={link.url} target="_blank" rel="noopener noreferrer">{link.label}</a>)}</div><p>לעדכונים רשמיים על תיירות ב{ATTRACTION.cityHe} וב{ATTRACTION.countryHe} אפשר להיעזר ב<a href={ATTRACTION.tourismPortal.url} target="_blank" rel="noopener noreferrer">{ATTRACTION.tourismPortal.label}</a>. רשימת המקורות נבדקת מחדש מעת לעת; מידע תפעולי משתנה תמיד גובר על מה שכתוב כאן.</p><p class="notice">מידע על שעות, תחבורה ושירותים עלול להשתנות ללא הודעה. יש לאמת פרטים קריטיים סמוך לביקור.</p>
+      <div><p class="notice">מקורות נבדקו ב־20 באוקטובר 2026. רשומת המפה אינה בדיקה של כל עסק, תנאי היום או מצב בטיחות. נקודת הסיכה אינה כניסה או מסלול נגיש מאומת.</p><p class="lede">התוכן נכתב כמדריך ידע עצמאי. רקע היסטורי ומיקומי השירותים מיוחסים לאתר המידע המסחרי של השוק; רשות שדות התעופה ומפעילי התחבורה הם נקודות בדיקה למסלול הנסיעה. רשומת Google Maps היא צילום מצב מתוארך בלבד. מידע מסחרי משתנה לא נכלל כהמלצה.</p><div class="source-links"><a href="https://en.machne.co.il/category/faq">אתר מידע מסחרי של השוק — FAQ: שעות, שירותים וחניה</a><a href="https://en.machne.co.il/category/history">אתר השוק — רקע היסטורי</a><a href="https://www.iaa.gov.il/en/airports/ben-gurion/directions/directions-list/?categoryId=10450">רשות שדות התעופה — הגעה ורכבת</a><a href="https://www.rail.co.il/">רכבת ישראל — תכנון נסיעה</a><a href="https://cfir.co.il/">כפיר — רכבת קלה</a>{ATTRACTION.officialLinks.map((link) => <a href={link.url} target="_blank" rel="noopener noreferrer">{link.label}</a>)}</div><p>לעדכונים רשמיים על תיירות ב{ATTRACTION.cityHe} וב{ATTRACTION.countryHe} אפשר להיעזר ב<a href={ATTRACTION.tourismPortal.url} target="_blank" rel="noopener noreferrer">{ATTRACTION.tourismPortal.label}</a>. המקורות המקושרים מאפשרים בדיקה מחדש; מידע תפעולי משתנה תמיד גובר על מה שכתוב כאן.</p><p class="notice">מידע על שעות, תחבורה ושירותים עלול להשתנות ללא הודעה. יש לאמת פרטים קריטיים סמוך לביקור.</p>
         <div class="responsibility">
           <p class="eyebrow">אחריות מבקר ותקשורת מדעית</p>
           <p>האתר הוא מדריך ידע עצמאי, לא מסחרי וללא תוכן ממומן. המטרה היא להנגיש עובדות על המקום — היסטוריה, תפעול והקשר עירוני — בצורה ברורה וניתנת לבדיקה. לכבוד הסביבה והסוחרים: שומרים על מעבר פנוי, מצלמים ברשות, ובודקים הגנה וכשרות מול נקודת המכירה עצמה.</p>
@@ -324,6 +305,13 @@ const faqSchema = {
       </div>
     </div>
   </section>
+<section class="section" id="photo-credits"><div class="container"><h2 class="section-title">מקורות צילום ורישיונות</h2><p>תצלומים היסטוריים, לא תיעוד של מצב העסקים או המחירים היום. גודל, דחיסה וחיתוך תצוגה הותאמו; אין שינוי בנושא הצילום. תצלום Emilio García והעיבוד שלו נשארים תחת CC BY-SA 2.0. שאר התצלומים תחת Unsplash License.</p><ul>
+<li>Emilio García — 10.8.2018, מעבר מקורה בשוק: <a href="https://commons.wikimedia.org/wiki/File:Mahane_Yehuda_(I)_(45298221191).jpg">הקובץ המקורי</a> · <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a></li>
+<li>Laura Siegal — פורסם 23.11.2019, חזית ברחוב אגריפס: <a href="https://unsplash.com/photos/beige-buildings-under-white-sky-FAzZa3YqZ2E">מקור</a> · <a href="https://unsplash.com/license">Unsplash License</a></li>
+<li>Ilanit Ohana — פורסם 16.2.2022, אגוזים: <a href="https://unsplash.com/photos/a-variety-of-nuts-are-on-display-at-a-market-s1Lgyr2zAmY">מקור</a> · <a href="https://unsplash.com/license">Unsplash License</a></li>
+<li>Ilanit Ohana — פורסם 16.2.2022, רימונים: <a href="https://unsplash.com/photos/a-pile-of-pomegranate-sitting-on-top-of-a-pile-of-fruit-SM8bQ9qpmXc">מקור</a> · <a href="https://unsplash.com/license">Unsplash License</a></li>
+<li>Ilanit Ohana — פורסם 16.2.2022, ממתקים: <a href="https://unsplash.com/photos/a-variety-of-colorful-candies-are-on-display-in-a-store-YsVdTwo0X1k">מקור</a> · <a href="https://unsplash.com/license">Unsplash License</a></li>
+</ul></div></section>
 </BaseLayout>
 
 <style>
@@ -344,9 +332,9 @@ const faqSchema = {
   .quick div { background:rgba(29,24,19,.68); padding:1rem 1.1rem; display:grid; grid-template-columns:80px 1fr; gap:.7rem; align-items:baseline; }
   .quick strong { color:#e4b453; }
   .quick span { font-size:.88rem; color:#eee4d5; }
-  .photo-credit { position:absolute; z-index:2; inset-inline-start:1rem; bottom:.75rem; font-size:.7rem; color:rgba(255,255,255,.72); margin:0; }
+  .photo-credit { position:relative; z-index:2; inset-inline-start:1rem; padding:0 1rem 1rem; font-size:.8rem; color:rgba(255,255,255,.72); margin:0; }
   .h1-entity { display:block; margin-top:1.25rem; font-size:clamp(.95rem,2vw,1.45rem); font-weight:700; letter-spacing:0; line-height:1.35; color:#e9dfd0; }
-  .rating-note { margin:0; padding:.7rem 1.1rem; font-size:.74rem; color:rgba(255,255,255,.76); border-top:1px solid rgba(255,255,255,.16); }
+  .rating-note { grid-column:1/-1; margin:0; padding:.7rem 1.1rem; font-size:.74rem; color:rgba(255,255,255,.76); border-top:1px solid rgba(255,255,255,.16); }
   .section-en { display:block; margin-top:.45rem; font-size:.78rem; font-weight:700; letter-spacing:.03em; color:#8b7e70; }
   .visit .section-en { color:#c9b9a4; }
   .geo-crumbs { display:flex; flex-wrap:wrap; gap:.45rem; align-items:center; font-size:.82rem; color:#766a5e; margin-bottom:1.1rem; }
@@ -429,7 +417,7 @@ const faqSchema = {
   .near-list h3 { margin:0 0 .25rem; font-size:1.3rem; }
   .near-list p { margin:0; color:#645a50; }
   .daynight { padding-top:0; }
-  .daynight-card { display:grid; grid-template-columns:1.1fr .9fr; min-height:520px; background:#1d1813; color:white; border-radius:34px; overflow:hidden; }
+  .daynight-card { display:grid; grid-template-columns:1fr; min-height:520px; background:#1d1813; color:white; border-radius:34px; overflow:hidden; }
   .night-photo { position:relative; }
   .night-photo img { width:100%; height:100%; object-fit:cover; }
   .night-photo span { position:absolute; bottom:.8rem; left:.8rem; background:rgba(0,0,0,.55); padding:.3rem .5rem; border-radius:6px; font-size:.68rem; }
@@ -447,7 +435,7 @@ const faqSchema = {
   details p { max-width:70ch; color:#645a50; margin:.75rem 0 0; }
   @media(max-width:900px){
     .hero-inner{grid-template-columns:1fr}.quick{grid-template-columns:1fr 1fr}.quick div{grid-template-columns:1fr}
-    .history-layout,.daynight-card{grid-template-columns:1fr}.history-photo{position:static}.history-photo img{height:420px}
+    .history-layout,.daynight-card.text-only{grid-template-columns:1fr}.daynight-card{grid-template-columns:1fr}.history-photo{position:static}.history-photo img{height:420px}
     .visit-grid{grid-template-columns:1fr 1fr}.visit-grid .big{grid-row:auto;grid-column:1/-1}
     .facility-grid{grid-template-columns:1fr 1fr}.map-head{display:block}.season-grid{grid-template-columns:1fr 1fr}.route-cards{grid-template-columns:1fr}.itinerary{grid-template-columns:1fr}
   }

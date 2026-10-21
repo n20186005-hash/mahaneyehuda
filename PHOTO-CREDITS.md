@@ -1,16 +1,17 @@
-# קרדיטים לצילום / Photo credits
+# קרדיטים לצילום
 
-האתר משתמש בתצלומים אמיתיים של שוק מחנה יהודה וסביבתו. זכויות היוצרים נשארות בידי היוצרים המקוריים ובהתאם לרישיון המקור.
+כל חמש התמונות המוגשות באתר זוהו מול הרשומה הפרטנית המקושרת, 20 באוקטובר 2026. הרשימה ופרטי השינוי מופיעים גם באתר, באזור `#photo-credits`.
 
-- **Emilio García — Mahane Yehuda (I)** — Wikimedia Commons — CC BY-SA 2.0. משמש כתמונת הגיבור.
-  - Source: `https://commons.wikimedia.org/wiki/File:Mahane_Yehuda_(I)_(45298221191).jpg`
-- **Laura Siegal** — Unsplash License. רחוב אגריפס / אזור השוק.
-  - CDN source used by the page: `https://images.unsplash.com/photo-1574513828624-af4be898b59e`
-- **Ilanit Ohana** — Unsplash License. תצלומי אגוזים, רימונים וממתקים בשוק מחנה יהודה.
-  - CDN sources used by the page: `photo-1645028846276-397e358c463c`, `photo-1645028846507-5c7ff1ba1266`, `photo-1645028846076-0cf7fc06664a`.
-- **Yael Hofnung** — Unsplash License. פעילות ערב באזור שוק מחנה יהודה.
-  - CDN source used by the page: `photo-1657095151501-cd73b0f03b77`.
+| קובץ | יוצר, תאריך המקור | רשומה ורישיון |
+| --- | --- | --- |
+| `src/assets/market-2018.jpg` | Emilio García, 2018-08-10 | [Commons](https://commons.wikimedia.org/wiki/File:Mahane_Yehuda_(I)_(45298221191).jpg), [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/) |
+| `public/images/agripas.jpg` | Laura Siegal, פורסם 2019-11-23 | [Unsplash FAzZa3YqZ2E](https://unsplash.com/photos/beige-buildings-under-white-sky-FAzZa3YqZ2E), [Unsplash License](https://unsplash.com/license) |
+| `public/images/nuts.jpg` | Ilanit Ohana, פורסם 2022-02-16 | [Unsplash s1Lgyr2zAmY](https://unsplash.com/photos/a-variety-of-nuts-are-on-display-at-a-market-s1Lgyr2zAmY), [Unsplash License](https://unsplash.com/license) |
+| `public/images/pomegranates.jpg` | Ilanit Ohana, פורסם 2022-02-16 | [Unsplash SM8bQ9qpmXc](https://unsplash.com/photos/a-pile-of-pomegranate-sitting-on-top-of-a-pile-of-fruit-SM8bQ9qpmXc), [Unsplash License](https://unsplash.com/license) |
+| `public/images/candies.jpg` | Ilanit Ohana, פורסם 2022-02-16 | [Unsplash YsVdTwo0X1k](https://unsplash.com/photos/a-variety-of-colorful-candies-are-on-display-in-a-store-YsVdTwo0X1k), [Unsplash License](https://unsplash.com/license) |
 
-## הערת אריזה
+תצלום Emilio המקורי זהה ל־SHA1 שפורסם ברשומת Commons: `de14f5325d880a257590402e8ffbd202e1648573`. Astro מייצר ממנו WebP ברוחב 1920; המקור נותר זמין בספריית המקור הציבורית. השינוי: גודל ודחיסה, וחיתוך תצוגה ב־CSS; גם העיבוד תחת CC BY-SA 2.0. קובצי Unsplash נשמרו מכתובת התמונה המדויקת ברשומה כ־JPEG ברוחב 1600; שינוי גודל, דחיסה וחיתוך תצוגה בלבד. אלה תצלומי עבר ולא תיעוד המחירים, העסקים או הנגישות היום.
 
-Logo, favicon ו־Open Graph card נשמרים מקומית בפרויקט. סביבת הבנייה הנוכחית אינה יכולה למשוך את קובצי הבינארי מ־Wikimedia/Unsplash, ולכן תצלומי המקור נשארים ככתובות חיצוניות מאומתות. זה מונע החלפת תצלומים אמיתיים בתמונות מלאכותיות או בתמונות שאינן של המקום. בסביבת CI עם גישה לרשת ניתן להוריד את הקבצים בכפוף לרישיונותיהם ולהחליף את `src` בנתיבים מקומיים.
+תמונת הממתקים הקודמת הוחלפה בקובץ YsVdTwo0X1k שזוהה במדויק. תמונת הערב הקודמת הוסרה כי לא הושלמה שרשרת זיהוי קובץ־רשומה; אין בכך טענה להפרת זכויות. תוכן תכנון הערב נשמר כטקסט. לא נמצא ברשומות שנקראו סימון אזהרת זכויות או דיון מחיקה; אין בכך ערובה משפטית.
+
+סמל, favicon וכרטיס OG הם איורים של האתר, לא תצלומים של השוק.

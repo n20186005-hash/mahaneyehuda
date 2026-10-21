@@ -16,3 +16,6 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+
+# Local Worker runtime state and generated bundles
+.wrangler/

@@ -16,7 +16,7 @@
   function clearDeny(){
     // Verify tab-local veto removal before publishing a shared grant.
     sessionStorage.removeItem(DENY);
-    if(sessionStorage.getItem(DENY)==='1')throw Error('Session refusal remains');
+    if(sessionStorage.getItem(DENY)!==null)throw Error('Session refusal remains');
     window.name=window.name.split(MARK).join('');
     if(window.name.includes(MARK))throw Error('Tab refusal remains');
     knownRefusal=false;
@@ -43,16 +43,30 @@
     const script=document.createElement('script');script.id='mahaneYehuda-ga4';script.async=true;script.src='https://www.googletagmanager.com/gtag/js?id='+ID;document.head.appendChild(script);
     window.gtag('js',new Date());window.gtag('config',ID,{allow_google_signals:false,allow_ad_personalization_signals:false});
   }
-  let retainedDenial=false;
+  function rollbackGrant(){
+    try{
+      localStorage.setItem(KEY,JSON.stringify({analytics:false}));
+      if(JSON.parse(localStorage.getItem(KEY)||'null')?.analytics===false)return true;
+    }catch{}
+    try{localStorage.removeItem(KEY);return localStorage.getItem(KEY)===null;}catch{return false;}
+  }
+  let retainedDenial=false,grantCleared=false;
   function save(analytics){
-    analytics=analytics===true;
+    analytics=analytics===true;grantCleared=false;
     if(!analytics){retainedDenial=markDeny();apply(false);}
     try{
       if(analytics){clearDeny();localStorage.getItem(KEY);localStorage.setItem(KEY+'-write-check','1');localStorage.removeItem(KEY+'-write-check');}
       localStorage.setItem(KEY,JSON.stringify({analytics}));
+      if(JSON.parse(localStorage.getItem(KEY)||'null')?.analytics!==analytics)throw Error('Choice not confirmed');
       if(analytics)window.__mahaneYehudaDenied=false;
-      apply(read()?.analytics===true);return true;
-    }catch{retainedDenial=markDeny();apply(false);return false;}
+      apply(read()?.analytics===true);
+      if(analytics&&!active)throw Error('Grant not confirmed');
+      return true;
+    }catch{
+      apply(false);retainedDenial=markDeny();
+      if(analytics)grantCleared=rollbackGrant();
+      return false;
+    }
   }
   window.marketConsent={read,save};
   const saved=read();apply(saved?.analytics===true);
@@ -60,14 +74,14 @@
   const banner=document.getElementById('cookie-banner'),bannerStatus=document.getElementById('cookie-banner-status');
   if(checkbox)checkbox.checked=active;
   if(banner)banner.setAttribute('data-open',!saved&&!knownRefusal?'true':'false');
-  function message(stored,requested){
+  function message(stored){
     return stored
-      ?active?'ההסכמה ל-Google Analytics נשמרה; הניתוח פעיל בכרטיסייה זו.':requested?'הבחירה נשמרה, אך לא ניתן לאמת את אחסון הדפדפן ולכן Google Analytics כבוי בכרטיסייה זו.':'הדחייה נשמרה; Google Analytics כבוי בכרטיסייה זו.'
-      :retainedDenial?'Google Analytics כבוי בכרטיסייה זו, גם במעבר בין עמודים וברענון. הבחירה הקבועה לא נשמרה; ייתכן שבכרטיסיות אחרות נותרה הרשאה ישנה. להסרתה יש למחוק את נתוני האתר בהגדרות הדפדפן.'
-        :'Google Analytics כבוי בעמוד זה. הבחירה לא נשמרה; לפני מעבר לעמוד אחר או רענון יש למחוק את נתוני האתר בהגדרות הדפדפן.';
+      ?active?'ההסכמה ל-Google Analytics נשמרה; הניתוח פעיל בכרטיסייה זו.':'הדחייה נשמרה; Google Analytics כבוי בכרטיסייה זו.'
+      :grantCleared?'Google Analytics כבוי בכרטיסייה זו. ההרשאה שלא אומתה נדחתה או הוסרה מהאחסון. בדקו את ההגדרות לפני מתן הרשאה מחדש.':retainedDenial?'Google Analytics כבוי בכרטיסייה זו, גם במעבר בין עמודים וברענון. הבחירה הקבועה לא נשמרה; ייתכן שנותרה הרשאה שמורה ושכרטיסיות אחרות ישתמשו בה. להסרתה יש למחוק את נתוני האתר בהגדרות הדפדפן.'
+        :'Google Analytics כבוי בעמוד זה בלבד. ייתכן שנותרה הרשאה שמורה ושכרטיסיות אחרות ישתמשו בה. הבחירה לא נשמרה; לפני מעבר לעמוד אחר או רענון יש למחוק את נתוני האתר בהגדרות הדפדפן.';
   }
   function choose(value){
-    const stored=save(value),feedback=message(stored,value),complete=stored&&(!value||active);
+    const stored=save(value),feedback=message(stored),complete=stored&&(!value||active);
     if(checkbox)checkbox.checked=active;
     if(status)status.textContent=feedback;
     if(banner)banner.setAttribute('data-open',complete?'false':'true');

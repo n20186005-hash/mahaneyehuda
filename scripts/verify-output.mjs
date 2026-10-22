@@ -17,3 +17,17 @@ const home=readFileSync('dist/index.html','utf8');assert(home.includes('67124')|
 for(const id of ['FAzZa3YqZ2E','s1Lgyr2zAmY','SM8bQ9qpmXc','YsVdTwo0X1k','45298221191'])assert(home.includes(id));assert(home.includes('creativecommons.org/licenses/by-sa/2.0/'));assert(home.includes('https://ims.gov.il/he/Forecasts'));
 const map=readFileSync('dist/sitemap-0.xml','utf8');assert.equal((map.match(/<loc>/g)||[]).length,4);assert(!map.includes('404'));
 console.log('PASS 5 Hebrew RTL HTML pages,4 original sitemap routes,14 exact FAQ pairs,metadata/local assets/source credits/scoped schema/static forecast removal.');
+
+// Read the real delivered cookie labels and stylesheet to catch utility-class
+// collisions that can detach disabled controls from their rows.
+const cookies = readFileSync('dist/cookies/index.html', 'utf8');
+const controls = [...cookies.matchAll(/<label\b([^>]*)>([\s\S]*?)<\/label>/g)].filter(m => /<input[^>]*type="checkbox"/.test(m[2]));
+assert.equal(controls.length, 3);
+for (const control of controls) {
+  const classes = (control[1].match(/class="([^"]*)"/)?.[1] || '').split(/\s+/);
+  assert(classes.includes('status'));
+  assert(!classes.some(c => ['fixed', 'absolute', 'sticky'].includes(c)), 'A checkbox label must remain in its preference row');
+}
+const cookieCSS = [...cookies.matchAll(/<link[^>]+href="(\/_astro\/[^" ]+\.css)"/g)].map(m => readFileSync('dist' + m[1], 'utf8')).join('') + [...cookies.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(m => m[1]).join('');
+assert(/\.status(?:\[[^\]]+\])? input(?:\[[^\]]+\])?:disabled\{[^}]*cursor:not-allowed[^}]*opacity:\.?65/.test(cookieCSS), 'Disabled controls retain their visible disabled treatment');
+console.log('PASS delivered cookie labels stay in normal flow; disabled treatment uses input semantics, without a positioning utility. Static regression, not browser geometry.');

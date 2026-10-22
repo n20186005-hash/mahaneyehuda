@@ -3,10 +3,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 <BaseLayout title="הגדרות Cookie" description="ניהול העדפות Cookie ו-Google Analytics במדריך שוק מחנה יהודה.">
   <section class="cookie-page section"><div class="container cookie-wrap">
-    <p class="eyebrow">שליטה בידיים שלכם</p><h1>הגדרות Cookie</h1><p class="updated">עודכן לאחרונה: 20 באוקטובר 2026</p>
+    <p class="eyebrow">שליטה בידיים שלכם</p><h1>הגדרות Cookie</h1><p class="updated">עודכן לאחרונה: 21 באוקטובר 2026</p>
     <p class="lede">אנו משתמשים במינימום הדרוש להפעלת האתר. אפשר לשנות את הבחירה בכל עת. פרסום מותאם אישית אינו פעיל באתר.</p>
     <form class="prefs card" id="cookie-form">
-      <div class="pref-row"><div><h2>Cookie הכרחיים</h2><p>נדרשים לתפקוד בסיסי, אבטחה ושמירת בחירת ההסכמה. לא ניתן לכבות קטגוריה זו.</p></div><label class="status fixed"><input type="checkbox" checked disabled /><span>פעיל תמיד</span></label></div>
+      <div class="pref-row"><div><h2>שמירת בחירה ותוכן בסיסי</h2><p>אפשר לקרוא את המדריך בלי ניתוח. בחירת ההסכמה נשמרת רק כשהדפדפן מאפשר אחסון.</p></div><label class="status fixed"><input type="checkbox" checked disabled /><span>התוכן זמין ללא ניתוח</span></label></div>
       <div class="pref-row"><div><h2>Cookie לניתוח</h2><p><strong>Google Analytics</strong> מסייע להבין באופן מצרפי כיצד מבקרים משתמשים באתר. הוא נטען רק אם תפעילו אפשרות זו.</p></div><label class="status"><input type="checkbox" id="analytics" name="analytics" /><span>הפעלה</span></label></div>
       <div class="pref-row"><div><h2>שיווק ופרסום</h2><p>האתר אינו מציג מודעות מותאמות אישית ואינו מפעיל Cookie שיווקיים.</p></div><label class="status fixed"><input type="checkbox" name="marketing" disabled /><span>לא פעיל</span></label></div>
       <div class="consent"><h2>ניהול הסכמה</h2><p>השבתת ניתוח אינה פוגעת בגישה לתוכן. אפשר לחזור לעמוד זה בכל עת ולשנות את הבחירה.</p><div class="buttons"><button type="button" id="save-preferences">שמירת העדפות</button><button type="button" id="reject-all" class="ghost">דחיית כל האפשרי</button></div><p id="saved" class="saved" role="status" aria-live="polite"></p></div>

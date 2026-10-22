@@ -65,13 +65,14 @@ GA4 测量 ID 为 `G-HXM22WWPKP`。只有用户在 `/cookies/` 明确启用分�
 
 ## 图片来源与授权
 
-当前页面使用真实照片：
-- Emilio García — Wikimedia Commons，CC BY-SA 2.0（市场主图）
-- Laura Siegal — Unsplash License（Agripas Street / Mahane Yehuda）
-- Ilanit Ohana — Unsplash License（坚果、石榴、糖果）
-- Yael Hofnung — Unsplash License（Mahane Yehuda 夜间/餐饮场景）
+当前页面的五张本地参考照片保留各自的作者、原始记录、许可链接和修改说明：
+- Emilio García — Wikimedia Commons，CC BY-SA 2.0（2018 年市场主图）；构建时生成优化 WebP，来源与衍生说明保留在页面。
+- Laura Siegal — Unsplash License（Agripas Street / Mahane Yehuda）。
+- Ilanit Ohana — Unsplash License（坚果、石榴、糖果三个独立记录）。
 
-由于本次执行环境无法从图片 CDN 拉取二进制文件，源码保留了经核对的原始图片 URL；正式上线前若希望做到完全本地化，可按以上授权下载原图至 `public/images/` 并把页面 `src` 改成本地路径。Logo、favicon 均已本地化。
+页面中的逐图来源链接为准；照片不代表当前摊位、服务、开放或夜间运营状态。源照片随项目提供，页面无需自动连接原图片 CDN。Logo、favicon 及注明为插画的 OG 图由项目本地提供。
+
+Astro 图像服务需要项目显式依赖 `sharp`；这里锁定已有解析版本 `0.35.3`。发布前应在干净依赖和图像缓存环境执行冻结锁文件安装与构建，不能用缓存命中代替真实图像生成验证。
 
 ## 内容原则
 

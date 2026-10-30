@@ -37,7 +37,7 @@ export const ATTRACTION = {
   // קטגוריה ודירוג (מסונכרן מ-Google Maps)
   categoryHe: 'שוק עירוני',
   ratingValue: 4.6,
-  ratingCount: 67124,
+  ratingCount: 67107,
   ratingSourceNote: 'Google Maps',
   ratingSyncedAt: '20 באוקטובר 2026',
   // אתרים סמכותיים המזהים את אותה ישות

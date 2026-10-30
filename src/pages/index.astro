@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Weather from '../components/Weather.astro';
 import { ATTRACTION, SITE_URL } from '../data/market';
+import { GROUP_ORDER, topicsByGroup, groupLabel, topicPath } from '../lib/topics';
 
 const siteUrl = Astro.site ? new URL('/', Astro.site).href : SITE_URL;
 const heroImage = new URL('/og-card.png', siteUrl).href;
@@ -13,6 +14,7 @@ const marketFullName = `${ATTRACTION.nameHe} (${ATTRACTION.nameEn})`;
 const addressLineHe = `${ATTRACTION.streetAddressHe}, ${ATTRACTION.cityHe}`;
 const ratingLabel = `${ATTRACTION.ratingValue} / 5`;
 const ratingCountLabel = ATTRACTION.ratingCount.toLocaleString('he-IL');
+const guideGroups = GROUP_ORDER.map((g) => ({ group: g, label: groupLabel(g), topics: topicsByGroup(g) }));
 
 const attractionSchema = {
   '@context': 'https://schema.org',
@@ -248,6 +250,35 @@ const faqSchema = {
       </div>
     </div>
   </section>
+
+  <section class="section guides" id="guides">
+    <div class="container">
+      <p class="eyebrow">מדריכים לפי נושא</p>
+      <h2 class="section-title">עמודי עזר לשוק מחנה יהודה</h2>
+      <p class="guides-intro">בחרו נושא כדי לקבל תשובה ממוקדת — הגעה, שעות, אוכל, היסטוריה ומסלולים.</p>
+      {guideGroups.map((g) => (
+        <div class="guide-group">
+          <h3 class="guide-group-title">{g.label}</h3>
+          <ul class="guide-list">
+            {g.topics.map((t) => (
+              <li><a href={topicPath(t)}>{t.h1}</a></li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <style>
+    .guides { background:#f3ece0; }
+    .guides .eyebrow { color:#a53b35; }
+    .guides-intro { max-width:60ch; color:#5b5046; margin:.4rem 0 2rem; }
+    .guide-group { margin-bottom:1.6rem; }
+    .guide-group-title { font-size:1.05rem; color:#1d1813; border-right:4px solid #a53b35; padding-right:.6rem; margin-bottom:.7rem; }
+    .guide-list { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(15rem,1fr)); gap:.55rem; }
+    .guide-list a { display:block; padding:.6rem .85rem; background:#fffaf2; border:1px solid #e0d2bb; border-radius:.5rem; text-decoration:none; color:inherit; font-weight:600; }
+    .guide-list a:hover { border-color:#a53b35; color:#a53b35; }
+  </style>
 
   <section class="section facilities" id="facilities">
     <div class="container">

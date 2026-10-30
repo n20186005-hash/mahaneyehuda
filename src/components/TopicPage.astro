@@ -1,0 +1,278 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { topicPath, groupLabel, resolveRelated } from '../lib/topics';
+import type { Topic } from '../data/topics';
+
+interface Props {
+  topic: Topic;
+}
+const { topic } = Astro.props;
+
+const site = import.meta.env.SITE_URL || 'https://mahaneyehuda.org';
+const absUrl = site + topicPath(topic);
+const groupHeb = groupLabel(topic.group);
+const related = resolveRelated(topic.related);
+
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'שוק מחנה יהודה',
+      item: site + '/'
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: groupHeb,
+      item: site + '/#guides'
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: topic.h1,
+      item: absUrl
+    }
+  ]
+};
+
+const webPage = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: topic.h1,
+  url: absUrl,
+  inLanguage: 'he',
+  description: topic.description,
+  isPartOf: {
+    '@type': 'WebSite',
+    name: 'שוק מחנה יהודה',
+    url: site + '/'
+  }
+};
+
+const faqPage = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: topic.faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: f.a
+    }
+  }))
+};
+
+const jsonLd = [webPage, breadcrumb, faqPage];
+---
+
+<BaseLayout title={topic.title} description={topic.description} type="article" jsonLd={jsonLd}>
+  <article class="container topic-page" dir="rtl">
+    <nav class="breadcrumb" aria-label="פירורי לחם">
+      <a href="/">שוק מחנה יהודה</a>
+      <span aria-hidden="true">›</span>
+      <a href="/#guides">{groupHeb}</a>
+      <span aria-hidden="true">›</span>
+      <span>{topic.h1}</span>
+    </nav>
+
+    <header class="topic-hero">
+      <p class="kicker">{topic.kicker}</p>
+      <h1>{topic.h1}</h1>
+      <p class="lead">{topic.lead}</p>
+      <p class="updated-note">
+        עדכון עובדתי: {topic.updated} · המידע עשוי להשתנות — יש לאמת פרטים סמוך לביקור.
+      </p>
+    </header>
+
+    <div class="topic-sections">
+      {
+        topic.sections.map((s) => (
+          <section id={s.id} class="topic-section">
+            <h2>{s.heading}</h2>
+            {s.paragraphs.map((p) => (
+              <p>{p}</p>
+            ))}
+            {s.callout && <p class="callout">{s.callout}</p>}
+          </section>
+        ))
+      }
+    </div>
+
+    {
+      topic.faqs.length > 0 && (
+        <section class="topic-faq" aria-labelledby="faq-title">
+          <h2 id="faq-title">שאלות נפוצות</h2>
+          <div class="faq-list">
+            {topic.faqs.map((f) => (
+              <details class="faq-item">
+                <summary>{f.q}</summary>
+                <div class="faq-answer">{f.a}</div>
+              </details>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      related.length > 0 && (
+        <section class="topic-related" aria-labelledby="related-title">
+          <h2 id="related-title">עמודים קשורים</h2>
+          <ul class="related-list">
+            {related.map((r) => (
+              <li>
+                <a href={topicPath(r)}>
+                  <span class="related-kicker">{groupLabel(r.group)}</span>
+                  <span class="related-title">{r.h1}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <p class="disclaimer">
+      אתר זה הוא מדריך תיירים עצמאי ובלתי תלוי. הוא אינו אתר רשמי של שוק מחנה יהודה ואינו מחובר
+      להנהלת השוק. לא נאספו כאן דירוגי לקוחות, ולא בוצעה המלצה על עסק מסוים.
+    </p>
+  </article>
+</BaseLayout>
+
+<style>
+  .topic-page {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 3rem;
+  }
+  .breadcrumb {
+    font-size: 0.85rem;
+    color: var(--muted, #6b6256);
+    margin-bottom: 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+  }
+  .breadcrumb a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+  .kicker {
+    color: var(--accent, #b4690e);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin: 0 0 0.4rem;
+  }
+  .topic-hero h1 {
+    font-size: 2rem;
+    line-height: 1.2;
+    margin: 0 0 0.75rem;
+  }
+  .lead {
+    font-size: 1.1rem;
+    color: #2c2620;
+    margin: 0 0 0.75rem;
+  }
+  .updated-note {
+    font-size: 0.82rem;
+    color: var(--muted, #6b6256);
+    background: #f6f1e7;
+    border-inline-start: 4px solid var(--accent, #b4690e);
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.35rem;
+  }
+  .topic-section {
+    margin-top: 2rem;
+  }
+  .topic-section h2 {
+    font-size: 1.35rem;
+    margin: 0 0 0.6rem;
+  }
+  .topic-section p {
+    margin: 0 0 0.8rem;
+    line-height: 1.7;
+  }
+  .callout {
+    background: #f6f1e7;
+    border-inline-start: 4px solid var(--accent, #b4690e);
+    padding: 0.6rem 0.85rem;
+    border-radius: 0.35rem;
+    font-size: 0.95rem;
+  }
+  .topic-faq {
+    margin-top: 2.5rem;
+  }
+  .topic-faq h2,
+  .topic-related h2 {
+    font-size: 1.35rem;
+    margin: 0 0 0.8rem;
+  }
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .faq-item {
+    border: 1px solid #e3d9c8;
+    border-radius: 0.5rem;
+    padding: 0.6rem 0.85rem;
+    background: #fffdf8;
+  }
+  .faq-item summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .faq-answer {
+    margin-top: 0.5rem;
+    line-height: 1.7;
+  }
+  .topic-related {
+    margin-top: 2.5rem;
+  }
+  .related-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: 0.75rem;
+  }
+  .related-list a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid #e3d9c8;
+    border-radius: 0.5rem;
+    background: #fffdf8;
+    text-decoration: none;
+    color: inherit;
+  }
+  .related-list a:hover {
+    border-color: var(--accent, #b4690e);
+  }
+  .related-kicker {
+    font-size: 0.78rem;
+    color: var(--accent, #b4690e);
+    font-weight: 700;
+  }
+  .related-title {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  .disclaimer {
+    margin-top: 3rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid #e3d9c8;
+    font-size: 0.85rem;
+    color: var(--muted, #6b6256);
+    line-height: 1.6;
+  }
+</style>

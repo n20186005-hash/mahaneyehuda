@@ -82,9 +82,7 @@ const jsonLd = [webPage, breadcrumb, faqPage];
       <p class="kicker">{topic.kicker}</p>
       <h1>{topic.h1}</h1>
       <p class="lead">{topic.lead}</p>
-      <p class="updated-note">
-        עדכון עובדתי: {topic.updated} · המידע עשוי להשתנות — יש לאמת פרטים סמוך לביקור.
-      </p>
+      <p class="updated-note">עודכן לאחרונה: {topic.updated}</p>
     </header>
 
     <div class="topic-sections">
@@ -135,10 +133,18 @@ const jsonLd = [webPage, breadcrumb, faqPage];
       )
     }
 
-    <p class="disclaimer">
-      אתר זה הוא מדריך תיירים עצמאי ובלתי תלוי. הוא אינו אתר רשמי של שוק מחנה יהודה ואינו מחובר
-      להנהלת השוק. לא נאספו כאן דירוגי לקוחות, ולא בוצעה המלצה על עסק מסוים.
-    </p>
+    {
+      topic.sources && topic.sources.length > 0 && (
+        <aside class="topic-sources" aria-labelledby="topic-sources-title">
+          <h2 id="topic-sources-title">מקורות לקריאה נוספת</h2>
+          <ul>
+            {topic.sources.map((s) => (
+              <li><a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></li>
+            ))}
+          </ul>
+        </aside>
+      )
+    }
   </article>
 </BaseLayout>
 
@@ -267,12 +273,8 @@ const jsonLd = [webPage, breadcrumb, faqPage];
     font-size: 1rem;
     font-weight: 600;
   }
-  .disclaimer {
-    margin-top: 3rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid #e3d9c8;
-    font-size: 0.85rem;
-    color: var(--muted, #6b6256);
-    line-height: 1.6;
-  }
+  .topic-sources { margin-top:2.5rem; border-top:1px solid #e3d9c8; padding-top:1.25rem; }
+  .topic-sources h2 { font-size:1.15rem; margin:0 0 .6rem; }
+  .topic-sources ul { margin:0; padding-inline-start:1.25rem; line-height:1.8; }
+  .topic-sources a { color:#785019; text-underline-offset:3px; }
 </style>

@@ -2,13 +2,16 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { topicPath, groupLabel, resolveRelated } from '../lib/topics';
 import type { Topic } from '../data/topics';
+import { getImage } from 'astro:assets';
+import marketOriginal from '../assets/market-2018.jpg';
 
 interface Props {
   topic: Topic;
 }
 const { topic } = Astro.props;
 
-const site = import.meta.env.SITE_URL || 'https://mahaneyehuda.org';
+const site = Astro.site!.origin;
+const hero = await getImage({ src: marketOriginal, width: 1200, format: 'webp', quality: 82 });
 const absUrl = site + topicPath(topic);
 const groupHeb = groupLabel(topic.group);
 const related = resolveRelated(topic.related);
@@ -66,9 +69,10 @@ const faqPage = {
 };
 
 const jsonLd = [webPage, breadcrumb, faqPage];
+const textParts = (text: string) => text.split(/(\d{1,2}:\d{2}(?:[–־-]\d{1,2}:\d{2})?|\d+\.\d+(?:,\s*\d+\.\d+)?)/g).map((value, i) => ({ value, numeric: i % 2 === 1 }));
 ---
 
-<BaseLayout title={topic.title} description={topic.description} type="article" jsonLd={jsonLd}>
+<BaseLayout title={topic.title} description={topic.description} jsonLd={jsonLd}>
   <article class="container topic-page" dir="rtl">
     <nav class="breadcrumb" aria-label="פירורי לחם">
       <a href="/">שוק מחנה יהודה</a>
@@ -79,11 +83,22 @@ const jsonLd = [webPage, breadcrumb, faqPage];
     </nav>
 
     <header class="topic-hero">
+      <div class="hero-copy">
       <p class="kicker">{topic.kicker}</p>
       <h1>{topic.h1}</h1>
-      <p class="lead">{topic.lead}</p>
+      <p class="lead">{textParts(topic.lead).map(p => p.numeric ? <bdi dir="ltr">{p.value}</bdi> : p.value)}</p>
       <p class="updated-note">עודכן לאחרונה: {topic.updated}</p>
+      </div>
+      <figure class="hero-photo">
+        <img src={hero.src} width={hero.attributes.width} height={hero.attributes.height} alt="מעבר מקורה בשוק מחנה יהודה, תצלום מ־2018" />
+        <figcaption>Emilio García · 2018 · <a href="/#photo-credits">מקור ורישיון CC BY-SA 2.0</a></figcaption>
+      </figure>
     </header>
+
+    <nav class="section-nav" aria-label="בעמוד זה">
+      {topic.sections.map(s => <a href={`#${s.id}`}>{s.heading}</a>)}
+      <a href="#faq-title">שאלות נפוצות</a>
+    </nav>
 
     <div class="topic-sections">
       {
@@ -91,13 +106,21 @@ const jsonLd = [webPage, breadcrumb, faqPage];
           <section id={s.id} class="topic-section">
             <h2>{s.heading}</h2>
             {s.paragraphs.map((p) => (
-              <p>{p}</p>
+              <p>{textParts(p).map(part => part.numeric ? <bdi dir="ltr">{part.value}</bdi> : part.value)}</p>
             ))}
             {s.callout && <p class="callout">{s.callout}</p>}
           </section>
         ))
       }
     </div>
+
+    {topic.maps && topic.maps.length > 0 && (
+      <section class="topic-maps" aria-labelledby="maps-title">
+        <h2 id="maps-title">נקודות להתמצאות במפה</h2>
+        <p>בחרו יעד ופתחו ב־Google Maps לתכנון הדרך מנקודת המוצא שלכם.</p>
+        <ul>{topic.maps.map(m => <li><a href={m.url} target="_blank" rel="noopener noreferrer">{m.label} ↗</a></li>)}</ul>
+      </section>
+    )}
 
     {
       topic.faqs.length > 0 && (
@@ -107,7 +130,7 @@ const jsonLd = [webPage, breadcrumb, faqPage];
             {topic.faqs.map((f) => (
               <details class="faq-item">
                 <summary>{f.q}</summary>
-                <div class="faq-answer">{f.a}</div>
+                <div class="faq-answer">{textParts(f.a).map(p => p.numeric ? <bdi dir="ltr">{p.value}</bdi> : p.value)}</div>
               </details>
             ))}
           </div>
@@ -150,7 +173,7 @@ const jsonLd = [webPage, breadcrumb, faqPage];
 
 <style>
   .topic-page {
-    max-width: 46rem;
+    max-width: 1180px;
     margin: 0 auto;
     padding: 1.5rem 1rem 3rem;
   }
@@ -177,25 +200,30 @@ const jsonLd = [webPage, breadcrumb, faqPage];
     margin: 0 0 0.4rem;
   }
   .topic-hero h1 {
-    font-size: 2rem;
+    font-size: clamp(2.2rem, 4.5vw, 4rem);
     line-height: 1.2;
     margin: 0 0 0.75rem;
   }
   .lead {
     font-size: 1.1rem;
-    color: #2c2620;
+    color: #e9dfd0;
     margin: 0 0 0.75rem;
   }
   .updated-note {
     font-size: 0.82rem;
-    color: var(--muted, #6b6256);
-    background: #f6f1e7;
+    color: #e9dfd0;
+    background: #2a241e;
     border-inline-start: 4px solid var(--accent, #b4690e);
     padding: 0.5rem 0.75rem;
     border-radius: 0.35rem;
   }
   .topic-section {
-    margin-top: 2rem;
+    scroll-margin-top: 6rem;
+    margin-top: 1.2rem;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: clamp(1.25rem, 3vw, 2rem);
   }
   .topic-section h2 {
     font-size: 1.35rem;
@@ -277,4 +305,20 @@ const jsonLd = [webPage, breadcrumb, faqPage];
   .topic-sources h2 { font-size:1.15rem; margin:0 0 .6rem; }
   .topic-sources ul { margin:0; padding-inline-start:1.25rem; line-height:1.8; }
   .topic-sources a { color:#785019; text-underline-offset:3px; }
+  .topic-hero { display:grid; grid-template-columns:1.2fr 1fr; overflow:hidden; border-radius:30px; background:var(--ink); color:var(--paper); }
+  .hero-copy { padding:clamp(1.5rem, 4vw, 3rem); }
+  .kicker { color:#e4b453; }
+  .hero-photo { margin:0; display:flex; flex-direction:column; min-width:0; }
+  .hero-photo img { flex:1; height:100%; min-height:320px; object-fit:cover; }
+  .hero-photo figcaption { color:#e9dfd0; padding:.6rem .9rem; font-size:.72rem; }
+  .section-nav { display:flex; flex-wrap:wrap; gap:.6rem; padding:1.4rem 0; }
+  .section-nav a { border:1px solid var(--line); border-radius:999px; padding:.5rem .85rem; text-decoration:none; background:var(--paper); font-size:.85rem; }
+  .section-nav a:hover { background:var(--stone-deep); }
+  .topic-sections, .topic-faq, .topic-related, .topic-sources, .topic-maps { max-width:52rem; margin-inline:auto; }
+  .topic-maps { margin-top:2rem; padding:1.5rem; border-radius:22px; background:var(--stone-deep); }
+  .topic-maps h2 { margin-top:0; font-size:1.35rem; }
+  .topic-maps ul { display:flex; flex-wrap:wrap; gap:.7rem; list-style:none; padding:0; }
+  .topic-maps a { display:block; background:var(--ink); color:var(--paper); padding:.65rem .9rem; border-radius:999px; text-decoration:none; }
+  #faq-title { scroll-margin-top:6rem; }
+  @media(max-width:760px) { .topic-hero { grid-template-columns:1fr; border-radius:22px; } .hero-photo img { height:220px; min-height:0; } .related-list { grid-template-columns:1fr; } }
 </style>

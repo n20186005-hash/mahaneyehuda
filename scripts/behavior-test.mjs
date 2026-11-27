@@ -6,7 +6,15 @@ import './consent-test.mjs';
 const calls=[],env={ASSETS:{fetch:async r=>{calls.push(r);return new Response('missing noindex',{status:404});}}};
 for(const origin of ['http://mahaneyehuda.org','https://www.mahaneyehuda.org'])for(const method of ['GET','HEAD']){const r=await worker.fetch(new Request(origin+'/404/?q=x%2Fy&q=2',{method}),env);assert.equal(r.status,301);assert.equal(r.headers.get('Location'),'https://mahaneyehuda.org/404/?q=x%2Fy&q=2');}
 assert.equal(calls.length,0);
-for(const uri of ['/404','/404/','/404.html','/unknown-test'])for(const method of ['GET','HEAD']){const r=await worker.fetch(new Request('https://mahaneyehuda.org'+uri+'?q=x%2Fy&q=2',{method}),env);assert.equal(r.status,404);assert.equal(r.headers.get('X-Robots-Tag'),'noindex');assert.equal(r.headers.get('Location'),null);assert.equal(await r.text(),method==='HEAD'?'':'missing noindex');assert.equal(new URL(calls.at(-1).url).search,'?q=x%2Fy&q=2');}
+for(const uri of ['/404','/404/','/404.html','/unknown-test'])for(const method of ['GET','HEAD']){
+ let r=await worker.fetch(new Request('https://mahaneyehuda.org'+uri+'?q=x%2Fy&q=2',{method}),env);
+ if(!uri.endsWith('/')&&!uri.endsWith('.html')){
+  assert.equal(r.status,301);
+  assert.equal(r.headers.get('Location'),'https://mahaneyehuda.org'+uri+'/?q=x%2Fy&q=2');
+  r=await worker.fetch(new Request(r.headers.get('Location'),{method}),env);
+ }
+ assert.equal(r.status,404);assert.equal(r.headers.get('X-Robots-Tag'),'noindex');assert.equal(r.headers.get('Location'),null);assert.equal(await r.text(),method==='HEAD'?'':'missing noindex');assert.equal(new URL(calls.at(-1).url).search,'?q=x%2Fy&q=2');
+}
 assert.equal((await worker.fetch(new Request('https://mahaneyehuda.org/cookies?q=1'),env)).headers.get('Location'),'https://mahaneyehuda.org/cookies/?q=1');
 console.log('PASS Worker units: existing canonical priority/query, explicit aliases and unknown GET/HEAD404/noindex. Local www logic is not evidence of public binding scope.');
 // Retirement is restricted to the known cache prefix and exact SW path.

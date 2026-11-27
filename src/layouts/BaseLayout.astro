@@ -57,14 +57,14 @@ const ogImageAlt = `סמל קשת ורימון של מדריך ${ATTRACTION.name
     <meta name="twitter:image:alt" content={ogImageAlt} />
     <title>{pageTitle}</title>
     {jsonLdData.length > 0 && jsonLdData.map((schema: unknown) => (
-      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+      <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
     ))}
   </head>
   <body>
     <a class="skip-link" href="#content">דילוג לתוכן</a>
     <Header />
     <main id="content"><slot /></main>
-    <Footer showDisclosure={Astro.url.pathname === '/'} />
+    <Footer />
     <aside id="cookie-banner" data-open="false" class="cookie-banner" aria-label="בחירת ניתוח">
       <p>ניתוח Google Analytics כבוי עד להסכמה. מפת Google נטענת בנפרד.</p>
       <button id="cookies-essential" type="button">דחיית ניתוח</button>

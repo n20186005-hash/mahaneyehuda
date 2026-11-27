@@ -1,22 +1,36 @@
 import {readFileSync,readdirSync,statSync,existsSync} from 'node:fs';
 import assert from 'node:assert/strict';
+import {TOPICS} from '../src/data/topics.ts';
+import {ATTRACTION} from '../src/data/market.ts';
 const walk=p=>readdirSync(p).flatMap(n=>statSync(p+'/'+n).isDirectory()?walk(p+'/'+n):[p+'/'+n]);
 const pages=walk('dist').filter(p=>p.endsWith('.html'));
-assert.equal(pages.length,5);
-const plain=s=>s.replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/&#39;|&#x27;/g,"'").replace(/&quot;/g,'"').replace(/\s+/g,' ').trim();
+assert.equal(TOPICS.length,40);
+assert.equal(pages.length,45);
+const topicRoutes=TOPICS.map(t=>`/${t.group}/${t.slug}/`);
+for(const t of TOPICS){
+ assert(t.sources?.length, t.slug+' source links');
+ assert(t.faqs.length>=3 && t.faqs.length<=5,t.slug+' FAQ count');
+ assert(t.related.every(s=>TOPICS.some(r=>r.slug===s)),t.slug+' related target');
+ assert(existsSync(`dist/${t.group}/${t.slug}/index.html`),t.slug+' retained URL');
+}
+const plain=s=>s.replace(/<\/?bdi\b[^>]*>/g,'').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/&#39;|&#x27;/g,"'").replace(/&quot;/g,'"').replace(/\s+/g,' ').trim();
 let faqCount=0;
+let assetChecks=0;
 for(const p of pages){const s=readFileSync(p,'utf8');assert(s.includes('<html lang="he" dir="rtl"'));assert.equal((s.match(/<h1(?:\s|>)/g)||[]).length,1,p);assert.match(s,/<title>[^<]+<\/title>/);assert.match(s,/<meta name="description" content="[^"]+"/);assert.match(s,/<link rel="canonical" href="https:\/\/mahaneyehuda.org\//);for(const lang of ['he','x-default'])assert(s.includes(`hreflang="${lang}"`));
- for(const m of s.matchAll(/(?:href|src)="(\/[^"#?]*)(?:[^"]*)"/g)){const a='dist'+m[1];assert(existsSync(a)||existsSync(a+'/index.html'),p+' resource '+m[1]);}
+ for(const m of s.matchAll(/(?:href|src)="(\/[^"#?]*)(?:[^"]*)"/g)){const a='dist'+m[1];assert(existsSync(a)||existsSync(a+'/index.html'),p+' resource '+m[1]);assetChecks++;}
+ assert.equal((s.match(/<footer(?:\s|>)/g)||[]).length,1,p+' single footer');
+ assert.equal((s.match(/מדריך תיירות עצמאי למבקרים בירושלים, ללא קשר להנהלת השוק או לגוף רשמי\./g)||[]).length,1,p+' single disclosure');
  assert(!/api.open-meteo|images.unsplash.com|upload.wikimedia.org|navigator.serviceWorker.register|plusCode|Q6M7|\/undefined\/|\/Users\//.test(s),p+' stale/private');
  if(p.endsWith('404.html'))assert(s.includes('noindex'));
  for(const m of s.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)){const j=JSON.parse(m[1]);assert(!j.aggregateRating&&!j.openingHoursSpecification&&j.isAccessibleForFree===undefined);if(j['@type']==='FAQPage'){
- const visible=[...s.matchAll(/<details[^>]*>\s*<summary[^>]*>([\s\S]*?)<\/summary>\s*<p[^>]*>([\s\S]*?)<\/p>/g)].map(x=>[plain(x[1]).replace(/\s*\+$/,''),plain(x[2])]);const schema=j.mainEntity.map(x=>[plain(x.name),plain(x.acceptedAnswer.text)]);assert.deepEqual(visible,schema);faqCount+=schema.length;}}
+ const visible=[...s.matchAll(/<details[^>]*>\s*<summary[^>]*>([\s\S]*?)<\/summary>\s*<(?:p|div)[^>]*>([\s\S]*?)<\/(?:p|div)>/g)].map(x=>[plain(x[1]).replace(/\s*\+$/,''),plain(x[2])]);const schema=j.mainEntity.map(x=>[plain(x.name),plain(x.acceptedAnswer.text)]);assert.deepEqual(visible,schema,p+' visible FAQ matches schema');faqCount+=schema.length;}}
 }
-assert.equal(faqCount,14);
-const home=readFileSync('dist/index.html','utf8');assert(home.includes('67124')||home.includes('67,124'));assert(home.includes('31.7848355'));assert(home.includes('35.2126355'));
+assert.equal(faqCount,14+TOPICS.reduce((n,t)=>n+t.faqs.length,0));
+const home=readFileSync('dist/index.html','utf8');assert(home.includes(ATTRACTION.ratingCount.toLocaleString('he-IL')));assert(home.includes('31.7848355'));assert(home.includes('35.2126355'));
 for(const id of ['FAzZa3YqZ2E','s1Lgyr2zAmY','SM8bQ9qpmXc','YsVdTwo0X1k','45298221191'])assert(home.includes(id));assert(home.includes('creativecommons.org/licenses/by-sa/2.0/'));assert(home.includes('https://ims.gov.il/he/Forecasts'));
-const map=readFileSync('dist/sitemap-0.xml','utf8');assert.equal((map.match(/<loc>/g)||[]).length,4);assert(!map.includes('404'));
-console.log('PASS 5 Hebrew RTL HTML pages,4 original sitemap routes,14 exact FAQ pairs,metadata/local assets/source credits/scoped schema/static forecast removal.');
+const map=readFileSync('dist/sitemap-0.xml','utf8');assert.equal((map.match(/<loc>/g)||[]).length,44);assert(!map.includes('404'));
+for(const route of topicRoutes){assert(map.includes(`https://mahaneyehuda.org${route}`));assert(home.includes(`href="${route}"`),route+' homepage link');}
+console.log(`PASS 45 Hebrew RTL pages, all 40 retained topic URLs linked from home,44 sitemap routes,${faqCount} exact FAQ pairs,${assetChecks} local resource references,metadata/source credits/scoped schema/single footer disclosures.`);
 
 // Read the real delivered cookie labels and stylesheet to catch utility-class
 // collisions that can detach disabled controls from their rows.

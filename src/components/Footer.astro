@@ -2,7 +2,7 @@
 interface Props {
   showDisclosure?: boolean;
 }
-const { showDisclosure = false } = Astro.props;
+const { showDisclosure = true } = Astro.props;
 ---
 <footer class="footer" dir="rtl">
   <div class="container footer-inner">
@@ -11,6 +11,8 @@ const { showDisclosure = false } = Astro.props;
       {showDisclosure && <p class="independent">מדריך תיירות עצמאי למבקרים בירושלים, ללא קשר להנהלת השוק או לגוף רשמי.</p>}
     </div>
     <nav class="footer-legal" aria-label="מידע משפטי">
+      <a href="/#sources">מקורות מידע</a>
+      <a href="/#photo-credits">מקורות צילום</a>
       <a href="/privacy/">מדיניות פרטיות</a>
       <a href="/terms/">תנאי שימוש</a>
       <a href="/cookies/">הגדרות Cookie</a>

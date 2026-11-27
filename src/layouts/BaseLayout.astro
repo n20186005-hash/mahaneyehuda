@@ -64,7 +64,7 @@ const ogImageAlt = `סמל קשת ורימון של מדריך ${ATTRACTION.name
     <a class="skip-link" href="#content">דילוג לתוכן</a>
     <Header />
     <main id="content"><slot /></main>
-    <Footer />
+    <Footer showDisclosure={Astro.url.pathname === '/'} />
     <aside id="cookie-banner" data-open="false" class="cookie-banner" aria-label="בחירת ניתוח">
       <p>ניתוח Google Analytics כבוי עד להסכמה. מפת Google נטענת בנפרד.</p>
       <button id="cookies-essential" type="button">דחיית ניתוח</button>
